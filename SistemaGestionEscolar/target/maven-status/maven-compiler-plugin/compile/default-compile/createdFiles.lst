@@ -1,0 +1,5 @@
+edu\itson\sistemagestionescolar\AsignacionDAO.class
+edu\itson\sistemagestionescolar\mensajeria\CanalR.class
+edu\itson\sistemagestionescolar\mensajeria\ICanalR.class
+edu\itson\sistemagestionescolar\CalificacionDAO.class
+edu\itson\sistemagestionescolar\mensajeria\Config.class
