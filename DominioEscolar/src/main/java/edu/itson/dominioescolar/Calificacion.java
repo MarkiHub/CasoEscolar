@@ -4,12 +4,16 @@
  */
 package edu.itson.dominioescolar;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Elkur
  */
-public class Calificacion {
+public class Calificacion implements Serializable{
 
+    private static final long serialVersionUID = 1L;
+    
     private long id;
     private float calificacion;
     private long idAlumno;

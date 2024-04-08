@@ -24,7 +24,7 @@ public class CanalR implements ICanalR {
         try {
             String message = new String(delivery.getBody(), "UTF-8");
             Gson gson = new Gson();
-            Calificacion calif = gson.fromJson(message, Calificacion.class);
+            Calificacion calif = gson.fromJson(message, Calificacion.class);         
             
             CalificacionDAO califDAO = new CalificacionDAO();
             
