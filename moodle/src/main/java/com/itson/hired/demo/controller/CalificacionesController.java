@@ -4,6 +4,7 @@
  */
 package com.itson.hired.demo.controller;
 
+import com.google.gson.Gson;
 import com.itson.hired.demo.mensajeria.config;
 import edu.itson.dominioescolar.Calificacion;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -25,6 +26,8 @@ public class CalificacionesController {
     
     @PostMapping("/subircalif")
     public void enviarCalificacion(@RequestBody Calificacion calificacion) {
-        rabbitTemplate.convertAndSend(config.QUEUE_NAME, calificacion);
+        Gson gson = new Gson();
+        String json = gson.toJson(calificacion);
+        rabbitTemplate.convertAndSend(config.EXCHANGE_NAME, config.ROUTING_KEY, json);
     }
 }
