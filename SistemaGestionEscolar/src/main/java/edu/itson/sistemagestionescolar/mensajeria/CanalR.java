@@ -19,6 +19,7 @@ import java.util.logging.Logger;
  *
  * @author Elkur
  */
+//El pirata de culiacan
 public class CanalR implements ICanalR {
 
     @Override
@@ -61,12 +62,16 @@ public class CanalR implements ICanalR {
     public String buscarAsignacion(Delivery delivery) {
         try {
             String message = new String(delivery.getBody(), "UTF-8");
+            System.out.println(message);
             Gson gson = new Gson();
-            Asignacion asig = gson.fromJson(message, Asignacion.class);
             AsignacionDAO asigDAO = new AsignacionDAO();
 
-            Asignacion asig1 = asigDAO.get(asig.getId());
+            Long elpepe = Long.valueOf(message);
+            
+            Asignacion asig1 = asigDAO.get(elpepe);
 
+            System.out.println(asig1);
+            
             return gson.toJson(asig1);
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(CanalR.class.getName()).log(Level.SEVERE, null, ex);
