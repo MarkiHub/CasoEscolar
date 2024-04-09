@@ -12,4 +12,5 @@ import com.rabbitmq.client.Delivery;
  */
 public interface ICanalR {
     public void guardarCalificacion(Delivery delivery);
+    public void guardarAsignacion(Delivery delivery);
 }

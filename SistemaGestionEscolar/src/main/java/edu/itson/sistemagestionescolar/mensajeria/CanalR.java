@@ -6,7 +6,9 @@ package edu.itson.sistemagestionescolar.mensajeria;
 
 import com.google.gson.Gson;
 import com.rabbitmq.client.Delivery;
+import edu.itson.dominioescolar.Asignacion;
 import edu.itson.dominioescolar.Calificacion;
+import edu.itson.sistemagestionescolar.AsignacionDAO;
 import edu.itson.sistemagestionescolar.CalificacionDAO;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
@@ -24,12 +26,30 @@ public class CanalR implements ICanalR {
         try {
             String message = new String(delivery.getBody(), "UTF-8");
             Gson gson = new Gson();
-            Calificacion calif = gson.fromJson(message, Calificacion.class);         
-            
+            Calificacion calif = gson.fromJson(message, Calificacion.class);
+
             CalificacionDAO califDAO = new CalificacionDAO();
-            
+
             califDAO.insert(calif);
-            
+
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(CanalR.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(CanalR.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void guardarAsignacion(Delivery delivery) {
+        try {
+            String message = new String(delivery.getBody(), "UTF-8");
+            Gson gson = new Gson();
+            Asignacion asig = gson.fromJson(message, Asignacion.class);
+
+            AsignacionDAO asigDAO = new AsignacionDAO();
+
+            asigDAO.insert(asig);
+
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(CanalR.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {

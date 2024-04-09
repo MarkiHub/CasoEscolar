@@ -23,8 +23,8 @@ import java.util.logging.Logger;
 public class Config {
 
     private static final String EXCHANGE_NAME = "escolar";
-    private static final String ROUTING_KEY = "guardarCalificaciones";
-    
+    private static final String ROUTING_KEYS[] = {"guardarCalificaciones","guardarAsignaciones"};
+
     public static void main(String[] args) {
         try {
             new Config().configChannel();
@@ -34,7 +34,7 @@ public class Config {
             Logger.getLogger(Config.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void configChannel() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
@@ -44,13 +44,21 @@ public class Config {
 
         channel.exchangeDeclare(EXCHANGE_NAME, "direct");
         String queueName = channel.queueDeclare().getQueue();
-
-        channel.queueBind(queueName, EXCHANGE_NAME, ROUTING_KEY);
-
+        
+        for (String KEY : ROUTING_KEYS) {
+            channel.queueBind(queueName, EXCHANGE_NAME, KEY);
+        }
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             ICanalR canal = new CanalR();
-            canal.guardarCalificacion(delivery);
-            System.out.println("Se guardo una calificacion");
+            String routingKey = delivery.getEnvelope().getRoutingKey();
+            System.out.println(routingKey);
+            if (routingKey.equalsIgnoreCase("guardarCalificaciones")) {
+                canal.guardarCalificacion(delivery);
+            } else if(routingKey.equalsIgnoreCase("guardarAsignaciones")){
+                canal.guardarAsignacion(delivery);
+            }
+
+            System.out.println("Se guardo algo");
         };
 
         channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {

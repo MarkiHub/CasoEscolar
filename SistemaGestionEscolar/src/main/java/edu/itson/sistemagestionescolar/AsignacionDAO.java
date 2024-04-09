@@ -22,7 +22,7 @@ public class AsignacionDAO {
 
     public void insert(Asignacion asignacion) throws SQLException {
         try (Connection con = DriverManager.getConnection(url, usuario, contraseña)) {
-            String query = "INSERT INTO Asignacion (nombre, idCurso) VALUES (?, ?)";
+            String query = "INSERT INTO Asignaciones (nombre, idCurso) VALUES (?, ?)";
             try (PreparedStatement statement = con.prepareStatement(query)) {
                 statement.setString(1, asignacion.getNombre());
                 statement.setLong(2, asignacion.getIdCurso());
