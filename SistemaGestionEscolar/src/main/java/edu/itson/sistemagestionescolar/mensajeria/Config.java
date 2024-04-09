@@ -6,6 +6,7 @@ package edu.itson.sistemagestionescolar.mensajeria;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.rabbitmq.client.BasicProperties;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -24,7 +25,7 @@ public class Config {
 
     private static final String EXCHANGE_NAME = "escolar";
     private static final String EXCHANGE_NAME2 = "escolar_r";
-    private static final String ROUTING_KEYS_IN[] = {"guardarCalificaciones", "guardarAsignaciones","consultarAsignacion"};
+    private static final String ROUTING_KEYS_IN[] = {"guardarCalificaciones", "guardarAsignaciones", "consultarAsignacion"};
     private static final String ROUTING_KEYS_OUT[] = {"enviarAsignacion"};
 
     public static void main(String[] args) {
@@ -46,11 +47,13 @@ public class Config {
         Channel channelOut = connection.createChannel();
 
         channelIn.exchangeDeclare(EXCHANGE_NAME, "direct");
-        channelOut.exchangeDeclare(EXCHANGE_NAME2, "direct");
+        channelOut.exchangeDeclare(EXCHANGE_NAME, "direct");
 
-        String queueNameIn = channelIn.queueDeclare().getQueue();
-        String queueNameOut = channelIn.queueDeclare().getQueue();
-
+        String queueNameIn = "solicitud";
+        String queueNameOut = "respuesta";
+        channelIn.queueDeclare(queueNameIn, false, false, false, null);
+        channelOut.queueDeclare(queueNameOut, false, false, false, null);
+        
         for (String KEY : ROUTING_KEYS_IN) {
             channelIn.queueBind(queueNameIn, EXCHANGE_NAME, KEY);
         }
@@ -65,7 +68,8 @@ public class Config {
                 canal.guardarAsignacion(delivery);
             } else if (routingKey.equalsIgnoreCase("consultarAsignacion")) {
                 String asig = canal.buscarAsignacion(delivery);
-                channelOut.basicPublish(EXCHANGE_NAME2, EXCHANGE_NAME2, null, asig.getBytes("UTF-8"));
+                channelOut.queueBind(queueNameOut, EXCHANGE_NAME, routingKey);
+                channelOut.basicPublish("",queueNameOut, null, asig.getBytes("UTF-8"));
             }
 
             System.out.println("Se guardo algo");
