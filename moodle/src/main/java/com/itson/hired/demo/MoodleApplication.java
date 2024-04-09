@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = "com.itson.hired.demo.config")
+@ComponentScan(basePackages = "com.itson.hired.demo.*")
 public class MoodleApplication {
 
 	public static void main(String[] args) {

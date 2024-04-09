@@ -28,6 +28,7 @@ public class CalificacionesController {
     public void enviarCalificacion(@RequestBody Calificacion calificacion) {
         Gson gson = new Gson();
         String json = gson.toJson(calificacion);
-        rabbitTemplate.convertAndSend(config.EXCHANGE_NAME, config.ROUTING_KEY, json);
+        rabbitTemplate.convertAndSend(config.EXCHANGE_NAME, "guardarCalificaciones", json);
     }
+    
 }
