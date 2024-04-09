@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 public class Config {
 
     private static final String EXCHANGE_NAME = "escolar";
+    private static final String EXCHANGE_NAME2 = "escolar_r";
     private static final String ROUTING_KEYS_IN[] = {"guardarCalificaciones", "guardarAsignaciones","consultarAsignacion"};
     private static final String ROUTING_KEYS_OUT[] = {"enviarAsignacion"};
 
@@ -45,7 +46,7 @@ public class Config {
         Channel channelOut = connection.createChannel();
 
         channelIn.exchangeDeclare(EXCHANGE_NAME, "direct");
-        channelOut.exchangeDeclare(EXCHANGE_NAME, "direct");
+        channelOut.exchangeDeclare(EXCHANGE_NAME2, "direct");
 
         String queueNameIn = channelIn.queueDeclare().getQueue();
         String queueNameOut = channelIn.queueDeclare().getQueue();
@@ -64,7 +65,7 @@ public class Config {
                 canal.guardarAsignacion(delivery);
             } else if (routingKey.equalsIgnoreCase("consultarAsignacion")) {
                 String asig = canal.buscarAsignacion(delivery);
-                channelOut.basicPublish(EXCHANGE_NAME, "enviarAsignacion", null, asig.getBytes("UTF-8"));
+                channelOut.basicPublish(EXCHANGE_NAME2, EXCHANGE_NAME2, null, asig.getBytes("UTF-8"));
             }
 
             System.out.println("Se guardo algo");
