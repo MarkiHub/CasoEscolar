@@ -36,7 +36,7 @@ public class AsignacionesController {
 //        String tilin = (String) rabbitTemplate.receiveAndConvert("respuesta");
 //        System.out.println(tilin);
         //Asignacion asignacion = (Asignacion) rabbitTemplate.receive("respuesta");
-        String eit = new String(rabbitTemplate.receive("respuesta").getBody(),"UTF-8") ;
+        var eit = new String(rabbitTemplate.receive("respuesta").getBody(),"UTF-8") ;
         System.out.println(eit);
         Asignacion qiubole = gson.fromJson(eit, Asignacion.class);
         //String respuesta = gson.toJson(asignacion);

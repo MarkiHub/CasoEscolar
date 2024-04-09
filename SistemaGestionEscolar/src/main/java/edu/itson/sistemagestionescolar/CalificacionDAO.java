@@ -18,7 +18,7 @@ public class CalificacionDAO {
 
     private final String url = "jdbc:mysql://localhost:3306/sistemaescolar";
     private final String usuario = "root";
-    private final String contraseña = "BaseDeDatos*";
+    private final String contraseña = "laresrangel";
 
     public void insert(Calificacion calificacion) throws SQLException {
         try (Connection con = DriverManager.getConnection(url, usuario, contraseña)) {
