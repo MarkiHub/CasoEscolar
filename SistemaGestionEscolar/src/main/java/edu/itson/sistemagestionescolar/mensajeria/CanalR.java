@@ -57,4 +57,21 @@ public class CanalR implements ICanalR {
         }
     }
 
+    @Override
+    public String buscarAsignacion(Delivery delivery) {
+        try {
+            String message = new String(delivery.getBody(), "UTF-8");
+            Gson gson = new Gson();
+            Asignacion asig = gson.fromJson(message, Asignacion.class);
+            AsignacionDAO asigDAO = new AsignacionDAO();
+
+            Asignacion asig1 = asigDAO.get(asig.getId());
+
+            return gson.toJson(asig1);
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(CanalR.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
 }

@@ -5,6 +5,7 @@
 package edu.itson.sistemagestionescolar.mensajeria;
 
 import com.rabbitmq.client.Delivery;
+import edu.itson.dominioescolar.Asignacion;
 
 /**
  *
@@ -13,4 +14,5 @@ import com.rabbitmq.client.Delivery;
 public interface ICanalR {
     public void guardarCalificacion(Delivery delivery);
     public void guardarAsignacion(Delivery delivery);
+    public String buscarAsignacion(Delivery delivery);
 }

@@ -23,7 +23,8 @@ import java.util.logging.Logger;
 public class Config {
 
     private static final String EXCHANGE_NAME = "escolar";
-    private static final String ROUTING_KEYS[] = {"guardarCalificaciones","guardarAsignaciones"};
+    private static final String ROUTING_KEYS_IN[] = {"guardarCalificaciones", "guardarAsignaciones","consultarAsignacion"};
+    private static final String ROUTING_KEYS_OUT[] = {"enviarAsignacion"};
 
     public static void main(String[] args) {
         try {
@@ -40,28 +41,36 @@ public class Config {
         factory.setHost("localhost");
 
         Connection connection = factory.newConnection();
-        Channel channel = connection.createChannel();
+        Channel channelIn = connection.createChannel();
+        Channel channelOut = connection.createChannel();
 
-        channel.exchangeDeclare(EXCHANGE_NAME, "direct");
-        String queueName = channel.queueDeclare().getQueue();
-        
-        for (String KEY : ROUTING_KEYS) {
-            channel.queueBind(queueName, EXCHANGE_NAME, KEY);
+        channelIn.exchangeDeclare(EXCHANGE_NAME, "direct");
+        channelOut.exchangeDeclare(EXCHANGE_NAME, "direct");
+
+        String queueNameIn = channelIn.queueDeclare().getQueue();
+        String queueNameOut = channelIn.queueDeclare().getQueue();
+
+        for (String KEY : ROUTING_KEYS_IN) {
+            channelIn.queueBind(queueNameIn, EXCHANGE_NAME, KEY);
         }
+
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             ICanalR canal = new CanalR();
             String routingKey = delivery.getEnvelope().getRoutingKey();
             System.out.println(routingKey);
             if (routingKey.equalsIgnoreCase("guardarCalificaciones")) {
                 canal.guardarCalificacion(delivery);
-            } else if(routingKey.equalsIgnoreCase("guardarAsignaciones")){
+            } else if (routingKey.equalsIgnoreCase("guardarAsignaciones")) {
                 canal.guardarAsignacion(delivery);
+            } else if (routingKey.equalsIgnoreCase("consultarAsignacion")) {
+                String asig = canal.buscarAsignacion(delivery);
+                channelOut.basicPublish(EXCHANGE_NAME, "enviarAsignacion", null, asig.getBytes("UTF-8"));
             }
 
             System.out.println("Se guardo algo");
         };
 
-        channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {
+        channelIn.basicConsume(queueNameIn, true, deliverCallback, consumerTag -> {
         });
     }
 }

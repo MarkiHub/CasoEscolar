@@ -8,6 +8,7 @@ import edu.itson.dominioescolar.Asignacion;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -32,5 +33,28 @@ public class AsignacionDAO {
             e.printStackTrace();
         }
 
+    }
+
+    public Asignacion get(long id) {
+        Asignacion asignacion = null;
+
+        try (Connection con = DriverManager.getConnection(url, usuario, contraseña)) {
+            String query = "SELECT * FROM Asignaciones WHERE id = ?";
+            try (PreparedStatement statement = con.prepareStatement(query)) {
+                statement.setLong(1, id);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        asignacion = new Asignacion();
+                        asignacion.setId(resultSet.getLong("id"));
+                        asignacion.setNombre(resultSet.getString("nombre"));
+                        asignacion.setIdCurso(resultSet.getLong("idCurso"));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return asignacion;
     }
 }
