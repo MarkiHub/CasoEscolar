@@ -44,6 +44,7 @@ CREATE TABLE Asignaciones(
 CREATE TABLE entregaAsignacion(
 	id INT PRIMARY KEY AUTO_INCREMENT,
 	calificacion INT,
+    fechaEntrega DATETIME NOT NULL DEFAULT NOW(),
 	idAlumno INT NOT NULL,
 	idAsignacion INT NOT NULL,
 	aprobada BOOLEAN NOT NULL DEFAULT FALSE,

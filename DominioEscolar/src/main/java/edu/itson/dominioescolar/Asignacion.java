@@ -13,6 +13,7 @@ public class Asignacion {
     private long id;
     private String nombre;
     private long idCurso;
+    private boolean reqAprobacion;
 
     public Asignacion() {
     }
@@ -73,9 +74,17 @@ public class Asignacion {
         return this.id == other.id;
     }
 
+    public boolean isReqAprobacion() {
+        return reqAprobacion;
+    }
+
+    public void setReqAprobacion(boolean reqAprobacion) {
+        this.reqAprobacion = reqAprobacion;
+    }
+
     @Override
     public String toString() {
-        return "Asignacion{" + "id=" + id + ", nombre=" + nombre + ", idCurso=" + idCurso + '}';
+        return "Asignacion{" + "id=" + id + ", nombre=" + nombre + ", idCurso=" + idCurso + ", reqAprobacion=" + reqAprobacion + '}';
     }
 
 }

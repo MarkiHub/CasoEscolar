@@ -30,10 +30,11 @@ public class AsignacionDAO {
     public void insert(Asignacion asignacion) throws SQLException {
         int idGenerado;
         try (Connection con = DriverManager.getConnection(url, usuario, contraseña)) {
-            String query = "INSERT INTO Asignaciones (nombre, idCurso) VALUES (?, ?)";
+            String query = "INSERT INTO Asignaciones (nombre, idCurso, reqAprobacion) VALUES (?, ?, ?)";
             try (PreparedStatement statement = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 statement.setString(1, asignacion.getNombre());
                 statement.setLong(2, asignacion.getIdCurso());
+                statement.setBoolean(3, asignacion.isReqAprobacion());
                 statement.executeUpdate();
 
                 ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -49,21 +50,41 @@ public class AsignacionDAO {
 
     public void enviarEntrega(EntregaAsignacion entrega) throws SQLException {
         int idGenerado;
+        boolean reqAprobacion = false;
         try (Connection con = DriverManager.getConnection(url, usuario, contraseña)) {
-            String query = "INSERT INTO entregaAsignacion (idAlumno, idAsignacion, fechaEntrega) VALUES (?, ?, ?)";
-            try (PreparedStatement statement = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-                statement.setLong(1, entrega.getIdAlumno());
-                statement.setLong(2, entrega.getIdAsignacion());
-                Timestamp fechaEntrega = new Timestamp(new java.util.Date().getTime());
-                entrega.setFechaEntrega(fechaEntrega);
-                statement.setTimestamp(3, fechaEntrega);
-                statement.executeUpdate();
 
-                ResultSet generatedKeys = statement.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    idGenerado = generatedKeys.getInt(1);
-                    entrega.setId(idGenerado);
+            String queryC = "SELECT reqAprobacion FROM Asignaciones WHERE id = ?;";
+            String query = "INSERT INTO entregaAsignacion (idAlumno, idAsignacion, fechaEntrega) VALUES (?, ?, ?)";
+            try (PreparedStatement statementC = con.prepareStatement(queryC);) {
+                //////////////////////////////////////////////
+                statementC.setLong(1, entrega.getIdAsignacion());
+                ResultSet resultSet = statementC.executeQuery();
+                if (resultSet.next()) {
+                    reqAprobacion = resultSet.getBoolean("reqAprobacion");
                 }
+                /////////////////////////////////////////////
+                if (!reqAprobacion) {
+                    query = "INSERT INTO entregaAsignacion (idAlumno, idAsignacion, fechaEntrega, aprobada) VALUES (?, ?, ?, ?)";
+                }
+
+                try (PreparedStatement statement = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);) {
+                    statement.setLong(1, entrega.getIdAlumno());
+                    statement.setLong(2, entrega.getIdAsignacion());
+                    Timestamp fechaEntrega = new Timestamp(new java.util.Date().getTime());
+                    entrega.setFechaEntrega(fechaEntrega);
+                    statement.setTimestamp(3, fechaEntrega);
+                    if (!reqAprobacion) {
+                        statement.setBoolean(4, true);
+                    }
+                    statement.executeUpdate();
+
+                    ResultSet generatedKeys = statement.getGeneratedKeys();
+                    if (generatedKeys.next()) {
+                        idGenerado = generatedKeys.getInt(1);
+                        entrega.setId(idGenerado);
+                    }
+                }
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -73,7 +94,7 @@ public class AsignacionDAO {
     public List<Asignacion> getAllCurso(long idCurso, long idAlumno) {
         Asignacion asignacion = null;
         List<Asignacion> asignacionesP = new ArrayList<>();
-        
+
         try (Connection con = DriverManager.getConnection(url, usuario, contraseña)) {
             String query = "SELECT A.* FROM AlumnosInscritos AI "
                     + "INNER JOIN Asignaciones A ON AI.idCurso = A.idCurso "
@@ -93,7 +114,7 @@ public class AsignacionDAO {
                     }
                 }
             }
-            
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
