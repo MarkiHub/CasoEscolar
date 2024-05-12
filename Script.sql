@@ -4,7 +4,8 @@ USE sistemaescolar;
 
 CREATE TABLE Alumnos(
 	id INT PRIMARY KEY AUTO_INCREMENT,
-	nombreCompleto VARCHAR(255) NOT NULL
+	nombreCompleto VARCHAR(255) NOT NULL,
+    idPadre INT
 );
 
 CREATE TABLE Profesores(
@@ -40,11 +41,12 @@ CREATE TABLE Asignaciones(
     FOREIGN KEY (idCurso) REFERENCES Cursos(id)
 );
 
-CREATE TABLE Calificaciones(
+CREATE TABLE entregaAsignacion(
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    calificacion FLOAT NOT NULL,
-    idAlumno INT NOT NULL,
-    idAsignacion INT NOT NULL,
-    FOREIGN KEY (idAlumno) REFERENCES Alumnos(id),
-    FOREIGN KEY (idAsignacion) REFERENCES Asignaciones(id)
+	calificacion INT,
+	idAlumno INT NOT NULL,
+	idAsignacion INT NOT NULL,
+	aprobada BOOLEAN NOT NULL DEFAULT FALSE,
+	FOREIGN KEY (idAlumno) REFERENCES alumnos(id),
+	FOREIGN KEY (idAsignacion) REFERENCES asignaciones(id) 
 );

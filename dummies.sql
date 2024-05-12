@@ -1,46 +1,47 @@
-INSERT INTO Alumnos (nombreCompleto) VALUES 
-('Juan Perez'),
-('María García'),
-('Pedro López'),
-('Ana Martínez'),
-('Luisa Hernández');
+-- Datos para la tabla Alumnos
+INSERT INTO Alumnos (nombreCompleto, idPadre) VALUES
+('Juan Perez', 1),
+('Maria Garcia', 2),
+('Luis Ramirez', NULL),
+('Ana Martinez', NULL),
+('Pedro Lopez', NULL);
 
--- Insertar algunos profesores de prueba
-INSERT INTO Profesores (nombreCompleto) VALUES 
-('Carlos González'),
-('Laura Rodríguez'),
-('Javier Ramírez'),
-('Sofía Díaz'),
-('Roberto Sánchez');
+-- Datos para la tabla Profesores
+INSERT INTO Profesores (nombreCompleto) VALUES
+('Carlos Rodriguez'),
+('Laura Fernandez'),
+('Roberto Sanchez'),
+('Sofia Gonzalez'),
+('Diego Martinez');
 
--- Insertar algunas materias de prueba
-INSERT INTO Materias (nombre) VALUES 
+-- Datos para la tabla Materias
+INSERT INTO Materias (nombre) VALUES
 ('Matemáticas'),
-('Lengua y Literatura'),
-('Ciencias Naturales'),
 ('Historia'),
-('Educación Física');
+('Literatura'),
+('Ciencias'),
+('Inglés');
 
--- Insertar algunos cursos de prueba
-INSERT INTO Cursos (idProfesor, idMateria) VALUES 
+-- Datos para la tabla Cursos
+INSERT INTO Cursos (idProfesor, idMateria) VALUES
 (1, 1),
 (2, 2),
 (3, 3),
 (4, 4),
 (5, 5);
 
--- Insertar algunos alumnos inscritos en cursos de prueba
-INSERT INTO AlumnosInscritos (idAlumno, idCurso) VALUES 
+-- Datos para la tabla AlumnosInscritos
+INSERT INTO AlumnosInscritos (idAlumno, idCurso) VALUES
 (1, 1),
 (2, 2),
 (3, 3),
 (4, 4),
 (5, 5);
 
--- Insertar algunas asignaciones de prueba
-INSERT INTO Asignaciones (nombre, idCurso) VALUES 
+-- Datos para la tabla Asignaciones
+INSERT INTO Asignaciones (nombre, idCurso) VALUES
 ('Tarea 1', 1),
-('Examen parcial', 2),
-('Proyecto final', 3),
-('Tarea 2', 4),
-('Examen final', 5);
+('Ensayo', 2),
+('Proyecto', 3),
+('Prueba', 4),
+('Presentación', 5);

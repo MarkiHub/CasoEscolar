@@ -5,10 +5,15 @@
 package com.itson.hired.demo.controller;
 
 import com.google.gson.Gson;
+import com.itson.hired.DAO.EntregasDAO;
 import com.itson.hired.demo.mensajeria.config;
+import edu.itson.dominioescolar.Asignacion;
 import edu.itson.dominioescolar.Calificacion;
+import edu.itson.dominioescolar.DTO.EntregaDTO;
+import java.util.List;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,16 +24,26 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class CalificacionesController {
- 
+
     @Autowired
     private RabbitTemplate rabbitTemplate;
-    
-    
+    EntregasDAO entrDAO = new EntregasDAO();
+
     @PostMapping("/subircalif")
     public void enviarCalificacion(@RequestBody Calificacion calificacion) {
         Gson gson = new Gson();
         String json = gson.toJson(calificacion);
         rabbitTemplate.convertAndSend(config.EXCHANGE_NAME, "guardarCalificaciones", json);
     }
-    
+
+    @GetMapping("/obtenerEntregas")
+    public List<EntregaDTO> obtenerEntregas(@RequestBody Asignacion asig) {
+        return entrDAO.getEntregasPendientes(asig.getId());
+    }
+
+    @PostMapping("/asignarCalificacion")
+    public EntregaDTO enviarCalificacion(@RequestBody EntregaDTO entregaDTO) {
+        entrDAO.asignarCalificacion(entregaDTO);
+        return entregaDTO;
+    }
 }

@@ -4,24 +4,33 @@
  */
 package edu.itson.dominioescolar;
 
-import java.sql.Date;
-import java.util.Objects;
+import java.sql.Timestamp;
 
 /**
  *
  * @author ildex
  */
 public class EntregaAsignacion {
-    private Date fechaEntrega;
+
+    private long id;
+    private Timestamp fechaEntrega;
     private float calificacion;
     private long idAlumno;
     private long idAsignacion;
 
-    public Date getFechaEntrega() {
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Timestamp getFechaEntrega() {
         return fechaEntrega;
     }
 
-    public void setFechaEntrega(Date fechaEntrega) {
+    public void setFechaEntrega(Timestamp fechaEntrega) {
         this.fechaEntrega = fechaEntrega;
     }
 
@@ -53,5 +62,5 @@ public class EntregaAsignacion {
     public String toString() {
         return "Entrega{" + "fechaEntrega=" + fechaEntrega + ", calificacion=" + calificacion + ", idAlumno=" + idAlumno + ", idAsignacion=" + idAsignacion + '}';
     }
-    
+
 }
