@@ -10,14 +10,14 @@ import java.io.Serializable;
  *
  * @author Elkur
  */
-public class Calificacion implements Serializable{
+public class Calificacion implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     private long id;
     private float calificacion;
     private long idAlumno;
-    private long idAsignacion;
+    private long idCurso;
 
     public Calificacion() {
     }
@@ -26,11 +26,12 @@ public class Calificacion implements Serializable{
         this.id = id;
     }
 
-    public Calificacion(long id, float calificacion, long idAlumno, long idAsignacion) {
-        this.id = id;
-        this.calificacion = calificacion;
-        this.idAlumno = idAlumno;
-        this.idAsignacion = idAsignacion;
+    public long getIdCurso() {
+        return idCurso;
+    }
+
+    public void setIdCurso(long idCurso) {
+        this.idCurso = idCurso;
     }
 
     public long getId() {
@@ -57,14 +58,6 @@ public class Calificacion implements Serializable{
         this.idAlumno = idAlumno;
     }
 
-    public long getIdAsignacion() {
-        return idAsignacion;
-    }
-
-    public void setIdAsignacion(long idAsignacion) {
-        this.idAsignacion = idAsignacion;
-    }
-
     @Override
     public int hashCode() {
         int hash = 5;
@@ -89,7 +82,7 @@ public class Calificacion implements Serializable{
 
     @Override
     public String toString() {
-        return "Calificacion{" + "id=" + id + ", calificacion=" + calificacion + ", idAlumno=" + idAlumno + ", idAsignacion=" + idAsignacion + '}';
+        return "Calificacion{" + "id=" + id + ", calificacion=" + calificacion + ", idAlumno=" + idAlumno + '}';
     }
 
 }

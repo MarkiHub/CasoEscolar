@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -30,10 +31,12 @@ public class CalificacionesController {
     EntregasDAO entrDAO = new EntregasDAO();
 
     @PostMapping("/subircalif")
-    public void enviarCalificacion(@RequestBody Calificacion calificacion) {
+    public Calificacion enviarCalificacion(@RequestParam long idCurso, @RequestParam long idAlumno) {
+        Calificacion calificacion = entrDAO.generarPromedio(idAlumno, idCurso);
         Gson gson = new Gson();
         String json = gson.toJson(calificacion);
         rabbitTemplate.convertAndSend(config.EXCHANGE_NAME, "guardarCalificaciones", json);
+        return calificacion;
     }
 
     @GetMapping("/obtenerEntregas")
@@ -42,8 +45,13 @@ public class CalificacionesController {
     }
 
     @PostMapping("/asignarCalificacion")
-    public EntregaDTO enviarCalificacion(@RequestBody EntregaDTO entregaDTO) {
+    public EntregaDTO asignarCalificacion(@RequestBody EntregaDTO entregaDTO) {
         entrDAO.asignarCalificacion(entregaDTO);
         return entregaDTO;
+    }
+    
+    @GetMapping("/obtenerPromedio")
+    public Calificacion obtenerPromedio(@RequestParam long idCurso, @RequestParam long idAlumno){
+        return entrDAO.generarPromedio(idAlumno, idCurso);
     }
 }

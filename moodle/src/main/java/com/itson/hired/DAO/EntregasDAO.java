@@ -5,6 +5,7 @@
 package com.itson.hired.DAO;
 
 import edu.itson.dominioescolar.Asignacion;
+import edu.itson.dominioescolar.Calificacion;
 import edu.itson.dominioescolar.DTO.EntregaDTO;
 import edu.itson.dominioescolar.DTO.EntregasPadresDTO;
 import java.sql.Connection;
@@ -112,5 +113,42 @@ public class EntregasDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public Calificacion generarPromedio(long idAlumno, long idCurso) {
+        int cantAsig = -1;
+        int sum = -1;
+        Calificacion calf = new Calificacion();
+        try (Connection con = DriverManager.getConnection(url, usuario, contraseña)) {
+            String query1 = "SELECT COUNT(A.id) AS cantAsig FROM Asignaciones A WHERE A.idCurso = ?;";
+            String query2 = "SELECT SUM(EA.calificacion) AS sum "
+                    + "FROM EntregaAsignacion EA "
+                    + "INNER JOIN Asignaciones A ON A.id = EA.idAsignacion "
+                    + "INNER JOIN Cursos C ON C.id = A.idCurso "
+                    + "WHERE EA.idAlumno = ? AND C.id = ?;";
+            try (PreparedStatement statement = con.prepareStatement(query1)) {
+                statement.setLong(1, idCurso);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        cantAsig = resultSet.getInt("cantAsig");
+                    }
+                }
+            }
+            try (PreparedStatement statement = con.prepareStatement(query2)) {
+                statement.setLong(1, idAlumno);
+                statement.setLong(2, idCurso);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        sum = resultSet.getInt("sum");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        calf.setCalificacion(sum/cantAsig);
+        calf.setIdAlumno(idAlumno);
+        calf.setIdCurso(idCurso);
+        return calf;
     }
 }
