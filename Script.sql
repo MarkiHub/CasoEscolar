@@ -51,3 +51,10 @@ CREATE TABLE entregaAsignacion(
 	FOREIGN KEY (idAlumno) REFERENCES alumnos(id),
 	FOREIGN KEY (idAsignacion) REFERENCES asignaciones(id) 
 );
+
+CREATE TABLE Calificaciones(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    idAlumno INT NOT NULL,
+    idCurso INT NOT NULL,
+    calificacion INT NOT NULL
+)
