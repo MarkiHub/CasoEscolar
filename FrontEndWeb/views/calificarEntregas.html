@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignar Calificación - Profesor</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Asignar Calificación</h1>
+    </header>
+    <nav>
+        <ul>
+
+        </ul>
+    </nav>
+    <main>
+        <div class="container">
+            <label for="idCurso">ID del Curso:</label>
+            <input type="number" id="idCurso" name="idCurso" required><br><br>
+            <button onclick="obtenerAsignaciones()">Obtener Asignaciones</button>
+            <div id="asignaciones-container"></div>
+            <hr>
+            <label for="idAsignacion">ID de la Asignación:</label>
+            <input type="number" id="idAsignacion" name="idAsignacion" required><br><br>
+            <button onclick="obtenerEntregas()">Obtener Entregas</button>
+            <div id="entregas-container"></div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; Sistema escuela</p>
+    </footer>
+
+    <script>
+        function obtenerAsignaciones() {
+            var idCurso = document.getElementById('idCurso').value;
+            fetch('http://localhost:8080/consultarAsignaciones?idCurso=' + idCurso)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Asignaciones:', data);
+                var asignacionesContainer = document.getElementById('asignaciones-container');
+                asignacionesContainer.innerHTML = '';
+                if (data.length > 0) {
+                    data.forEach(asignacion => {
+                        var p = document.createElement('p');
+                        p.textContent = 'Asignación ID: ' + asignacion.id + ', Nombre: ' + asignacion.nombre;
+                        asignacionesContainer.appendChild(p);
+                    });
+                } else {
+                    asignacionesContainer.textContent = 'No hay asignaciones para este curso.';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Hubo un error al obtener las asignaciones.');
+            });
+        }
+
+        function obtenerEntregas() {
+            var idAsignacion = document.getElementById('idAsignacion').value;
+            fetch('http://localhost:8080/obtenerEntregas?idAsignacion=' + idAsignacion)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Entregas:', data);
+                var entregasContainer = document.getElementById('entregas-container');
+                entregasContainer.innerHTML = '';
+                if (data.length > 0) {
+                    data.forEach(entrega => {
+                        var div = document.createElement('div');
+                        div.classList.add('entrega');
+                        var h3 = document.createElement('h3');
+                        h3.textContent = entrega.nombreAlumno;
+                        var pFechaEntrega = document.createElement('p');
+                        pFechaEntrega.textContent = 'Fecha de entrega: ' + entrega.fechaEntrega;
+                        var pCalificacion = document.createElement('p');
+                        pCalificacion.textContent = 'Calificación: ' + (entrega.calificacion != null ? entrega.calificacion : 'Pendiente');
+                        var inputCalificacion = document.createElement('input');
+                        inputCalificacion.type = 'number';
+                        inputCalificacion.placeholder = 'Ingrese la calificación';
+                        inputCalificacion.setAttribute('data-idEntrega', entrega.idEntrega);
+                        var buttonAsignar = document.createElement('button');
+                        buttonAsignar.textContent = 'Asignar Calificación';
+                        buttonAsignar.onclick = function() {
+                            asignarCalificacion(inputCalificacion);
+                        };
+                        div.appendChild(h3);
+                        div.appendChild(pFechaEntrega);
+                        div.appendChild(pCalificacion);
+                        div.appendChild(inputCalificacion);
+                        div.appendChild(buttonAsignar);
+                        entregasContainer.appendChild(div);
+                    });
+                } else {
+                    entregasContainer.textContent = 'No hay entregas pendientes para esta asignación.';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Hubo un error al obtener las entregas.');
+            });
+        }
+
+        function asignarCalificacion(inputCalificacion) {
+            var idEntrega = inputCalificacion.getAttribute('data-idEntrega');
+            var calificacion = inputCalificacion.value;
+            if (calificacion === '') {
+                alert('Por favor ingrese la calificación.');
+                return;
+            }
+            fetch('http://localhost:8080/asignarCalificacion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    idEntrega: idEntrega,
+                    calificacion: parseInt(calificacion)
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Entrega calificada:', data);
+                alert('Calificación asignada correctamente.');
+                obtenerEntregas(); // Volver a cargar las entregas después de asignar la calificación
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Hubo un error al asignar la calificación.');
+            });
+        }
+    </script>
+</body>
+</html>

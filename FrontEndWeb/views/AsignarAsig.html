@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignar Asignación</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    
+</head>
+
+<body>
+    <header>
+        <h1>Asignar Asignación</h1>
+    </header>
+    <main>
+        <div class="container">
+            <form id="form-asignacion">
+                <label for="nombre">Nombre:</label><br>
+                <input type="text" id="nombre" name="nombre" required><br>
+                <label for="idCurso">ID Curso:</label><br>
+                <input type="number" id="idCurso" name="idCurso" required><br>
+                <label for="reqAprobacion">Requiere Aprobación:</label><br>
+                <select id="reqAprobacion" name="reqAprobacion" required>
+                    <option value="true">Sí</option>
+                    <option value="false">No</option>
+                </select><br><br>
+                <button type="submit">Asignar Asignación</button>
+            </form>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; Sistema escuela</p>
+    </footer>
+
+    <script>
+        document.getElementById('form-asignacion').addEventListener('submit', function (event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+            var object = {};
+            formData.forEach(function (value, key) {
+                object[key] = value;
+            });
+            var json = JSON.stringify(object);
+            fetch('http://localhost:8080/AsignarAsignacion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: json
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Respuesta del servidor:', data);
+                alert('Asignación realizada correctamente.');
+                // Aquí podrías redirigir a otra página o realizar otras acciones según necesites
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Hubo un error al asignar la asignación.');
+            });
+        });
+    </script>
+</body>
+
+</html>

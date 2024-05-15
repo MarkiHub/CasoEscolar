@@ -9,7 +9,7 @@
 <body>
     <header>
         <h1>Revisión de Tareas</h1>
-        <h3>Nombre</h3>
+        <h3>Nombre</h3> <!-- Aquí se puede agregar el nombre del padre o del alumno según sea necesario -->
     </header>
     <nav>
         <ul>
@@ -18,42 +18,87 @@
     </nav>
     <main>
         <div class="container">
-            <h2>Calificaciones de: Marcos López</h2>
-            <div class="tarea">
-                <h3>Ensayo sobre la revolución industrial</h3>
-                <p>Curso: Historia</p>
-                <p>Calificación: NUMERO</p>
-                <p>Fecha de entregado: 02/04/2024</p>
-            </div>
-            <div class="tarea">
-                <h3>Enlaces químicos</h3>
-                <p>Curso: Química</p>
-                <p>Calificación: NUMERO</p>
-                <p>Fecha de entregado: 01/04/2024</p>
-            </div>
-            <div class="tarea">
-                <h3>Gauss Jordan</h3>
-                <p>Curso: Matemáticas</p>
-                <p>Calificación: NUMERO</p>
-                <p>Fecha de entregado: 29/03/2024</p>
-            </div>
-            <div class="tarea">
-                <h3>Gauss Jordan</h3>
-                <p>Curso: Matemáticas</p>
-                <p>Calificación: NUMERO</p>
-                <p>Fecha de entregado: 29/03/2024</p>
-            </div>
-            <div class="tarea">
-                <h3>Gauss Jordan</h3>
-                <p>Curso: Matemáticas</p>
-                <p>Calificación: NUMERO</p>
-                <p>Fecha de entregado: 29/03/2024</p>
-            </div>
+            <label for="idPadre">ID del Padre:</label>
+            <input type="number" id="idPadre" name="idPadre">
+            <button onclick="cargarTareas()">Cargar Tareas</button>
+        </div>
+        <div class="container" id="tareas-container">
+            <!-- Las tareas se cargarán aquí -->
         </div>
     </main>
     <footer>
         <p>&copy; Sistema escuela</p>
     </footer>
+
+    <script>
+        // Función para cargar las tareas pendientes de aprobación
+        function cargarTareas() {
+            var idPadre = document.getElementById('idPadre').value;
+            fetch('http://localhost:8080/consultarAsigPendientes?idPadre=' + idPadre)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Tareas pendientes:', data);
+                var tareasContainer = document.getElementById('tareas-container');
+                tareasContainer.innerHTML = ''; // Limpiar el contenedor antes de cargar las nuevas tareas
+                data.forEach(tarea => {
+                    var div = document.createElement('div');
+                    div.classList.add('tarea');
+                    var h3 = document.createElement('h3');
+                    h3.textContent = tarea.nombreAsignacion;
+                    var pCurso = document.createElement('p');
+                    pCurso.textContent = 'Curso: ' + tarea.nombreCurso;
+                    var pFechaEntrega = document.createElement('p');
+                    pFechaEntrega.textContent = 'Fecha de entrega: ' + tarea.fechaEntrega;
+                    var pCalificacion = document.createElement('p');
+                    pCalificacion.textContent = 'Calificación: ' + (tarea.calificacion ? tarea.calificacion : 'Pendiente');
+                    var buttonAprobar = document.createElement('button');
+                    buttonAprobar.textContent = 'Aprobar';
+                    buttonAprobar.onclick = function() {
+                        aprobarTarea(tarea.idEntrega);
+                    };
+                    div.appendChild(h3);
+                    div.appendChild(pCurso);
+                    div.appendChild(pFechaEntrega);
+                    div.appendChild(pCalificacion);
+                    div.appendChild(buttonAprobar);
+                    tareasContainer.appendChild(div);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Hubo un error al cargar las tareas.');
+            });
+        }
+
+        // Función para aprobar una tarea
+        function aprobarTarea(idEntrega) {
+            fetch('http://localhost:8080/AprobarAsignacion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    idEntrega: idEntrega
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('La tarea ha sido aprobada correctamente.');
+                    // Después de aprobar la tarea, volvemos a cargar las tareas pendientes
+                    cargarTareas();
+                } else {
+                    console.error('La tarea no pudo ser aprobada.');
+                    alert('Hubo un error al aprobar la tarea.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Hubo un error al aprobar la tarea.');
+            });
+        }
+
+        // Cargar las tareas pendientes al cargar la página
+        // cargarTareas();
+    </script>
 </body>
 </html>
-

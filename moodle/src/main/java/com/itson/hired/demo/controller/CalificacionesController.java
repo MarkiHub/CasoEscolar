@@ -42,8 +42,8 @@ public class CalificacionesController {
     }
 
     @GetMapping("/obtenerEntregas")
-    public List<EntregaDTO> obtenerEntregas(@RequestBody Asignacion asig) {
-        return entrDAO.getEntregasPendientes(asig.getId());
+    public List<EntregaDTO> obtenerEntregas(@RequestParam long idAsignacion) {
+        return entrDAO.getEntregasPendientes(idAsignacion);
     }
 
     @PostMapping("/asignarCalificacion")

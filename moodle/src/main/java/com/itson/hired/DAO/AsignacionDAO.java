@@ -90,7 +90,7 @@ public class AsignacionDAO {
         }
     }
 
-    public List<Asignacion> getAllCurso(long idCurso, long idAlumno) {
+    public List<Asignacion> getAsigPendientes(long idCurso, long idAlumno) {
         Asignacion asignacion = null;
         List<Asignacion> asignacionesP = new ArrayList<>();
 
@@ -102,6 +102,31 @@ public class AsignacionDAO {
             try (PreparedStatement statement = con.prepareStatement(query)) {
                 statement.setLong(1, idAlumno);
                 statement.setLong(2, idCurso);
+                try (ResultSet resultSet = statement.executeQuery()) {
+
+                    while (resultSet.next()) {
+                        asignacion = new Asignacion();
+                        asignacion.setId(resultSet.getLong("id"));
+                        asignacion.setNombre(resultSet.getString("nombre"));
+                        asignacion.setIdCurso(resultSet.getLong("idCurso"));
+                        asignacionesP.add(asignacion);
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return asignacionesP;
+    }
+    public List<Asignacion> getAllAsig(long idCurso) {
+        Asignacion asignacion = null;
+        List<Asignacion> asignacionesP = new ArrayList<>();
+
+        try (Connection con = DriverManager.getConnection(url, usuario, contraseña)) {
+            String query = "SELECT * FROM Asignaciones WHERE idCurso = ?";
+            try (PreparedStatement statement = con.prepareStatement(query)) {
+                statement.setLong(1, idCurso);
                 try (ResultSet resultSet = statement.executeQuery()) {
 
                     while (resultSet.next()) {
@@ -142,6 +167,4 @@ public class AsignacionDAO {
 
         return asignacion;
     }
-    
-
 }

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultar Asignaciones</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <header>
+        <h1>Consultar Asignaciones</h1>
+    </header>
+    <main>
+        <div class="container">
+            <label for="idCurso">ID Curso:</label><br>
+            <input type="number" id="idCurso" name="idCurso" required><br><br>
+            <label for="idAlumno">ID Alumno:</label><br>
+            <input type="number" id="idAlumno" name="idAlumno" required><br><br>
+            <button onclick="consultarAsignaciones()">Consultar Asignaciones</button>
+            <div id="asignaciones-container"></div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; Sistema escuela</p>
+    </footer>
+
+    <script>
+        function consultarAsignaciones() {
+            var idCurso = document.getElementById('idCurso').value;
+            var idAlumno = document.getElementById('idAlumno').value;
+            fetch('http://localhost:8080/consultarAsignacionesPendientes?idCurso=' + idCurso + '&idAlumno=' + idAlumno)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Asignaciones del alumno:', data);
+                var asignacionesContainer = document.getElementById('asignaciones-container');
+                asignacionesContainer.innerHTML = '';
+                if (data.length > 0) {
+                    data.forEach(asignacion => {
+                        var div = document.createElement('div');
+                        var h2 = document.createElement('h2');
+                        h2.textContent = asignacion.nombre;
+                        var button = document.createElement('button');
+                        button.textContent = 'Entregar';
+                        button.onclick = function() {
+                            entregarAsignacion(asignacion.id);
+                        };
+                        div.appendChild(h2);
+                        div.appendChild(button);
+                        asignacionesContainer.appendChild(div);
+                    });
+                } else {
+                    asignacionesContainer.textContent = 'El alumno no tiene asignaciones en este curso.';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Hubo un error al consultar las asignaciones.');
+            });
+        }
+    
+        function entregarAsignacion(idAsignacion) {
+            fetch('http://localhost:8080/EntregarAsignacion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: null, // El ID se generará en el servidor
+                    fechaEntrega: null, // Se establecerá en el servidor
+                    idAsignacion: idAsignacion, // El ID de la asignación
+                    idAlumno: document.getElementById('idAlumno').value // El ID del alumno desde el input
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Respuesta del servidor:', data);
+                alert('Asignación entregada correctamente.');
+                // Después de entregar la tarea, volvemos a cargar la lista de tareas
+                consultarAsignaciones();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Hubo un error al entregar la asignación.');
+            });
+        }
+    </script>
+    
+</body>
+
+</html>

@@ -10,6 +10,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -23,30 +24,13 @@ public class PadresController {
     private EntregasDAO entrDao = new EntregasDAO();
 
     @GetMapping("/consultarAsigPendientes")
-    public List<EntregasPadresDTO> consultarAsignacionesPendientes(@RequestBody IdPadre idPadre) {
-        return entrDao.getAsignacionesAprobar(idPadre.idPadre);
+    public List<EntregasPadresDTO> consultarAsignacionesPendientes(@RequestParam long idPadre) {
+        return entrDao.getAsignacionesAprobar(idPadre);
     }
     
     
     @PostMapping("/AprobarAsignacion")
     public void aprobarAsignacion(@RequestBody EntregasPadresDTO entrega){
         entrDao.aprobarAsignacion(entrega);
-    }
-    
-    private static class IdPadre {
-
-        long idPadre;
-
-        public IdPadre() {
-        }
-
-        public long getIdPadre() {
-            return idPadre;
-        }
-
-        public void setIdPadre(long idPadre) {
-            this.idPadre = idPadre;
-        }
-
     }
 }
