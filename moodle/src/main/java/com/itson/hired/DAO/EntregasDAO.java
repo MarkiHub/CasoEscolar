@@ -8,6 +8,7 @@ import edu.itson.dominioescolar.Asignacion;
 import edu.itson.dominioescolar.Calificacion;
 import edu.itson.dominioescolar.DTO.EntregaDTO;
 import edu.itson.dominioescolar.DTO.EntregasPadresDTO;
+import edu.itson.dominioescolar.DTO.ReviewDTO;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -76,7 +77,7 @@ public class EntregasDAO {
             String query
                     = "SELECT EA.id AS idEntrega, A.nombre AS nombreAsignacion, "
                     + "EA.fechaEntrega, AL.id AS idAlumno, AL.nombreCompleto AS nombreAlumno, "
-                    + "EA.calificacion "
+                    + "EA.calificacion, EA.idAsignacion "
                     + "FROM EntregaAsignacion EA "
                     + "INNER JOIN Asignaciones A ON EA.idAsignacion = A.id "
                     + "INNER JOIN Alumnos AL ON AL.id = EA.idAlumno "
@@ -91,6 +92,7 @@ public class EntregasDAO {
                         entrega.setIdEntrega(resultSet.getLong("idEntrega"));
                         entrega.setNombreAlumno(resultSet.getString("nombreAlumno"));
                         entrega.setNombreAsignacion(resultSet.getString("nombreAsignacion"));
+                        entrega.setIdAsignacion(resultSet.getLong("idAsignacion"));
                         entrePendientes.add(entrega);
                     }
                 }
@@ -146,9 +148,80 @@ public class EntregasDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        calf.setCalificacion(sum/cantAsig);
+        calf.setCalificacion(sum / cantAsig);
         calf.setIdAlumno(idAlumno);
         calf.setIdCurso(idCurso);
         return calf;
     }
+
+    public List<ReviewDTO> getReviews(long idAlumno, long idAsignacion) {
+        List<ReviewDTO> reviews = new ArrayList<>();
+        long idCurso = getCursoFromAsignacion(idAsignacion);
+        try (Connection con = DriverManager.getConnection(url, usuario, contraseña)) {
+            String query
+                    = "SELECT A.id AS idAsignacion, EA.idAlumno, EA.id AS idEntregaAsignacion, EA.calificacion FROM Asignaciones A "
+                    + "INNER JOIN EntregaAsignacion EA ON EA.idAsignacion = A.id "
+                    + "WHERE EA.idAlumno = ? AND A.idCurso = ?;";
+            try (PreparedStatement statement = con.prepareStatement(query)) {
+                statement.setLong(1, idCurso);
+                statement.setLong(2, idAlumno);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        ReviewDTO review = new ReviewDTO();
+                        review.setIdAsignacion(resultSet.getLong("idAsignacion"));
+                        review.setIdAlumno(resultSet.getLong("idAlumno"));
+                        review.setIdEntregaAsignacion(resultSet.getLong("idEntregaAsignacion"));
+                        review.setCalificacion(resultSet.getInt("calificacion"));
+                        reviews.add(review);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return reviews;
+    }
+
+    public int getNumAsignaciones(long idAsignacion) {
+        long id = -1;
+        int numAsignaciones = -1;
+        try (Connection con = DriverManager.getConnection(url, usuario, contraseña)) {
+
+            String query2
+                    = "SELECT COUNT(A.id) AS numAsignaciones FROM Asignaciones A WHERE A.idCurso = ?";
+            id = getCursoFromAsignacion(idAsignacion);
+            try (PreparedStatement statement = con.prepareStatement(query2)) {
+                statement.setLong(1, id);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        numAsignaciones = resultSet.getInt("numAsignaciones");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return numAsignaciones;
+    }
+
+    private long getCursoFromAsignacion(long idAsignacion) {
+        long id = -1;
+        try (Connection con = DriverManager.getConnection(url, usuario, contraseña)) {
+            String query
+                    = "SELECT C.id FROM Asignaciones A INNER JOIN Cursos C ON c.id = A.idCurso WHERE A.id = ?";
+
+            try (PreparedStatement statement = con.prepareStatement(query)) {
+                statement.setLong(1, idAsignacion);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        id = resultSet.getLong("id");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return id;
+    }
+
 }

@@ -18,6 +18,7 @@ public class EntregaDTO {
     private long idAlumno;
     private String nombreAlumno;
     private Integer calificacion;
+    private long idAsignacion;
 
     public EntregaDTO() {
     }
@@ -68,6 +69,14 @@ public class EntregaDTO {
 
     public void setCalificacion(Integer calificacion) {
         this.calificacion = calificacion;
+    }
+
+    public long getIdAsignacion() {
+        return idAsignacion;
+    }
+
+    public void setIdAsignacion(long idAsignacion) {
+        this.idAsignacion = idAsignacion;
     }
 
     @Override

@@ -5,7 +5,6 @@
 package com.itson.hired.DAO;
 
 import edu.itson.dominioescolar.Asignacion;
-import edu.itson.dominioescolar.DTO.EntregaDTO;
 import edu.itson.dominioescolar.EntregaAsignacion;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -143,4 +142,6 @@ public class AsignacionDAO {
 
         return asignacion;
     }
+    
+
 }

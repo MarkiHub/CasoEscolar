@@ -7,6 +7,7 @@ package com.itson.hired.demo.controller;
 import com.google.gson.Gson;
 import com.itson.hired.DAO.EntregasDAO;
 import com.itson.hired.demo.mensajeria.config;
+import com.itson.hired.negocio.RendimientoNegocio;
 import edu.itson.dominioescolar.Asignacion;
 import edu.itson.dominioescolar.Calificacion;
 import edu.itson.dominioescolar.DTO.EntregaDTO;
@@ -29,7 +30,8 @@ public class CalificacionesController {
     @Autowired
     private RabbitTemplate rabbitTemplate;
     EntregasDAO entrDAO = new EntregasDAO();
-
+    RendimientoNegocio rendNeg = new RendimientoNegocio();
+    
     @PostMapping("/subircalif")
     public Calificacion enviarCalificacion(@RequestParam long idCurso, @RequestParam long idAlumno) {
         Calificacion calificacion = entrDAO.generarPromedio(idAlumno, idCurso);
@@ -47,6 +49,7 @@ public class CalificacionesController {
     @PostMapping("/asignarCalificacion")
     public EntregaDTO asignarCalificacion(@RequestBody EntregaDTO entregaDTO) {
         entrDAO.asignarCalificacion(entregaDTO);
+        rendNeg.revisarRendimiento(entregaDTO.getIdAlumno(),entregaDTO.getIdAsignacion(),entrDAO);
         return entregaDTO;
     }
     
