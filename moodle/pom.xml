@@ -41,6 +41,13 @@
             <artifactId>mysql-connector-j</artifactId>
             <version>8.3.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-websocket -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <version>6.1.6</version>
+        </dependency>
+
         <dependency>
             <groupId>edu.itson</groupId>
             <artifactId>DominioEscolar</artifactId>

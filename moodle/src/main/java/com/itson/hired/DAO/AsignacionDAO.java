@@ -24,7 +24,7 @@ public class AsignacionDAO {
 
     private final String url = "jdbc:mysql://localhost:3306/sistemaescolar";
     private final String usuario = "root";
-    private final String contraseña = "BaseDeDatos*";
+    private final String contraseña = "laresrangel";
 
     public void insert(Asignacion asignacion) throws SQLException {
         int idGenerado;
@@ -55,13 +55,11 @@ public class AsignacionDAO {
             String queryC = "SELECT reqAprobacion FROM Asignaciones WHERE id = ?;";
             String query = "INSERT INTO entregaAsignacion (idAlumno, idAsignacion, fechaEntrega) VALUES (?, ?, ?)";
             try (PreparedStatement statementC = con.prepareStatement(queryC);) {
-                //////////////////////////////////////////////
                 statementC.setLong(1, entrega.getIdAsignacion());
                 ResultSet resultSet = statementC.executeQuery();
                 if (resultSet.next()) {
                     reqAprobacion = resultSet.getBoolean("reqAprobacion");
                 }
-                /////////////////////////////////////////////
                 if (!reqAprobacion) {
                     query = "INSERT INTO entregaAsignacion (idAlumno, idAsignacion, fechaEntrega, aprobada) VALUES (?, ?, ?, ?)";
                 }

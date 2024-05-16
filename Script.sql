@@ -13,6 +13,11 @@ CREATE TABLE Profesores(
     nombreCompleto VARCHAR(255) NOT NULL
 );
 
+CREATE TABLE Padres(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    nombreCompleto VARCHAR(255) NOT NULL
+);
+
 CREATE TABLE Materias(
 	id INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(255) NOT NULL
@@ -57,4 +62,21 @@ CREATE TABLE Calificaciones(
     idAlumno INT NOT NULL,
     idCurso INT NOT NULL,
     calificacion INT NOT NULL
-)
+);
+
+CREATE TABLE Conversaciones (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_profesor INT NOT NULL,
+    id_padre INT NOT NULL,
+    FOREIGN KEY (id_profesor) REFERENCES Profesores (id),
+    FOREIGN KEY (id_padre) REFERENCES Padres (id)
+);
+
+CREATE TABLE Mensaje (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_conversacion INT NOT NULL,
+    id_sender INT NOT NULL,
+    text TEXT,
+    fechaEnviado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_conversacion) REFERENCES Conversaciones (id)
+);

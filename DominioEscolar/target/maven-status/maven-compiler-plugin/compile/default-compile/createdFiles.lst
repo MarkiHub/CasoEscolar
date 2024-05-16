@@ -1,5 +1,12 @@
 edu\itson\dominioescolar\Asignacion.class
-edu\itson\dominioescolar\EntregaAsignacion.class
 edu\itson\dominioescolar\Calificacion.class
-edu\itson\dominioescolar\Alumno.class
+edu\itson\dominioescolar\Conversacion.class
 edu\itson\dominioescolar\Curso.class
+edu\itson\dominioescolar\EntregaAsignacion.class
+edu\itson\dominioescolar\Profesor.class
+edu\itson\dominioescolar\Padre.class
+edu\itson\dominioescolar\DTO\EntregaDTO.class
+edu\itson\dominioescolar\DTO\ReviewDTO.class
+edu\itson\dominioescolar\Alumno.class
+edu\itson\dominioescolar\Mensaje.class
+edu\itson\dominioescolar\DTO\EntregasPadresDTO.class

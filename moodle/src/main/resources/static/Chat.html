@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chat</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.3.0/sockjs.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+        <script>
+            var stompClient = null;
+
+            function connect() {
+                var socket = new SockJS('/ws');
+                stompClient = Stomp.over(socket);
+                stompClient.connect({}, function (frame) {
+                    console.log('Connected: ' + frame);
+                    stompClient.subscribe('/topic/messages', function (MensajeSalida) {
+                        showMessageOutput(JSON.parse(MensajeSalida.body));
+                    });
+                });
+            }
+
+            function sendMessage() {
+                var from = document.getElementById('from').value;
+                var text = document.getElementById('text').value;
+                stompClient.send("/app/chat", {}, JSON.stringify({'from': from, 'text': text}));
+            }
+
+            function showMessageOutput(MensajeSalida) {
+                var response = document.getElementById('response');
+                var p = document.createElement('p');
+                p.style.wordWrap = 'break-word';
+                p.appendChild(document.createTextNode(MensajeSalida.from + ": " + MensajeSalida.text + " (" + MensajeSalida.time + ")"));
+                response.appendChild(p);
+
+                // Actualizar la vista automáticamente al recibir un mensaje
+                response.scrollTop = response.scrollHeight;
+
+                // Mostrar el mensaje recibido en la consola del navegador
+                console.log("Mensaje recibido:", MensajeSalida);
+            }
+
+
+            window.onload = function () {
+                connect();
+            };
+        </script>
+    </head>
+    <body>
+        <div id="response" style="height: 300px; overflow-y: scroll;"></div>
+        <div>
+            <div>
+                <input type="text" id="from" placeholder="From"/>
+                <input type="text" id="text" placeholder="Message"/>
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </body>
+</html>
