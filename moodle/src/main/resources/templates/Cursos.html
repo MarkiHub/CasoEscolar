@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Cursos por Profesor</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="mt-5">Consulta de Cursos por Profesor</h1>
+        <div id="resultados" class="mt-3"></div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const url = '/dogo';
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    var token = data.token;
+                    sessionStorage.setItem("token", token);
+
+                    fetch("/ConsultarCursos", {
+                        method: "GET",
+                        headers: {
+                            "Authorization": token
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            var resultadosDiv = document.getElementById("resultados");
+                            resultadosDiv.innerHTML = "";
+
+                            data.forEach(curso => {
+                                var cursoDiv = document.createElement("div");
+                                cursoDiv.classList.add("card", "mt-3");
+
+                                cursoDiv.innerHTML = `
+                                    <div class="card-body">
+                                        <h5 class="card-title">ID Curso: ${curso.idCurso}</h5>
+                                        <p class="card-text">Nombre Materia: ${curso.nombreMateria}</p>
+                                        <button class="btn btn-primary">Ver Curso</button>
+                                    </div>
+                                `;
+
+                                cursoDiv.querySelector("button").addEventListener("click", function () {
+                                    window.location.href = "/profesor/verCurso?id=" + curso.idCurso;
+                                });
+
+                                resultadosDiv.appendChild(cursoDiv);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error al realizar la consulta:', error);
+                        });
+                })
+                .catch(error => {
+                    console.error('Ocurrió un error:', error);
+                });
+        });
+
+    </script>
+</body>
+
+</html>

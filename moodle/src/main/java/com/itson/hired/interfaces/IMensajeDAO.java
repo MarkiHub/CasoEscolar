@@ -8,6 +8,6 @@ package com.itson.hired.interfaces;
  *
  * @author ildex
  */
-public interface IMensajeDAO implements Asign{
+public interface IMensajeDAO  {
     
 }

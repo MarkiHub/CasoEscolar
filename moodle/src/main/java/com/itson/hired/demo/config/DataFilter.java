@@ -5,16 +5,7 @@
 package com.itson.hired.demo.config;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import org.springframework.stereotype.Component;
-
-/**
- *
- * @author Elkur
- */
-//Implementation layer to implement Filter 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,13 +14,12 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMethod;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST})
-public class AuthFilter implements Filter {
+/**
+ *
+ * @author Elkur
+ */
+public class DataFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest,
@@ -38,27 +28,23 @@ public class AuthFilter implements Filter {
             throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse res = (HttpServletResponse) servletResponse;
-
-        if (req.getMethod().equalsIgnoreCase("get")) {
-            filterChain.doFilter(req, res);
-            return;
-        }
-
-        if (req.getHeader("Authorization") == null && !req.getServletPath().equalsIgnoreCase("/nigga") && !req.getServletPath().equalsIgnoreCase("/dogo")) {
-            res.setStatus(401);
-            return;
-        }
-        if (req.getMethod().equalsIgnoreCase("post") && !req.getServletPath().equalsIgnoreCase("/nigga") && !req.getServletPath().equalsIgnoreCase("/dogo")) {
+        System.out.println(req.getRequestURI());
+        if (req.getMethod().equalsIgnoreCase("get") && req.getRequestURI().equalsIgnoreCase("/ConsultarCursos")) {
             String token = req.getHeader("Authorization");
-            System.out.println(token);
-
+            
             Jws<Claims> claim = jwt.JwtGenerator.decodeJWT2(token);
-            if (claim == null) {
+            Claims body = claim.getBody();
+
+            if (String.valueOf(body.get("role")).equalsIgnoreCase("Profesor")) {
+                Long idProfesor = Long.valueOf(String.valueOf(body.get("userId")));
+                req.setAttribute("idProfesor", idProfesor);
+            } else {
                 res.setStatus(401);
                 return;
             }
+
         }
-        
+
         filterChain.doFilter(req, res);
     }
 }

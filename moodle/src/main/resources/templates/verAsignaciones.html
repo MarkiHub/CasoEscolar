@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ver Asignaciones</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <h1 class="mt-5">Ver Asignaciones</h1>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <table class="table mt-5">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre de la Asignación</th>
+                        <th>Requiere Aprobación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="asignaciones-list">
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <footer>
+        <div class="container">
+            <p class="mt-5">&copy; Sistema escuela</p>
+        </div>
+    </footer>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            cargarAsignaciones();
+
+            function cargarAsignaciones() {
+                fetch('/consultarAsignaciones?idCurso=' + obtenerIdCursoDesdeURL(), {
+                    headers: {
+                        'Authorization': sessionStorage.getItem("token")
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error en la solicitud: ' + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        document.getElementById('asignaciones-list').innerHTML = '';
+                        data.forEach(asignacion => {
+                            agregarAsignacionATabla(asignacion);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Hubo un error al cargar las asignaciones.');
+                    });
+            }
+
+            function obtenerIdCursoDesdeURL() {
+                const params = new URLSearchParams(window.location.search);
+                return params.get('idCurso');
+            }
+
+            function agregarAsignacionATabla(asignacion) {
+                const asignacionesList = document.getElementById('asignaciones-list');
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${asignacion.id}</td>
+                    <td>${asignacion.nombre}</td>
+                    <td>${asignacion.reqAprobacion}</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="verEntregas(${asignacion.id})">Ver Entregas</button>
+                    </td>
+                `;
+                asignacionesList.appendChild(newRow);
+            }
+        });
+
+        function verEntregas(idAsignacion) {
+            window.location.href = `/profesor/verEntregas?idAsignacion=${idAsignacion}`;
+        }
+    </script>
+</body>
+
+</html>

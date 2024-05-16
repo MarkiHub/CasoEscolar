@@ -17,7 +17,7 @@ public class PadreDAO {
     private static final String URL = "jdbc:mysql://localhost:3306/sistemaescolar";
     // Establece el nombre de usuario y contraseña de la base de datos
     private static final String USERNAME = "root";
-    private static final String PASSWORD = "BaseDeDatps*";
+    private static final String PASSWORD = "BaseDeDatos*";
 
     // Consulta SQL para insertar un nuevo padre en la base de datos
     private static final String INSERT_PADRE_SQL = "INSERT INTO padres (id, nombreCompleto) VALUES (?, ?)";
@@ -49,7 +49,7 @@ public class PadreDAO {
             if (resultSet.next()) {
                 padre = new Padre();
                 padre.setId(resultSet.getLong("id"));
-                padre.setNombreCompleto(resultSet.getString("nombre_completo"));
+                padre.setNombreCompleto(resultSet.getString("nombreCompleto"));
             }
         }
         return padre;
