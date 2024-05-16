@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asignar Asignación</title>
     <link rel="stylesheet" href="../assets/styles.css">
-    
+
 </head>
 
 <body>
@@ -34,6 +34,29 @@
     </footer>
 
     <script>
+        var token;
+        document.addEventListener('DOMContentLoaded', () => {
+            const url = 'http://localhost:8081/dogo';
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    token = data.token;
+                    console.log('Token obtenido:', token);
+
+                })
+                .catch(error => {
+                    console.error('Ocurrió un error:', error);
+                });
+        });
+
+
+
         document.getElementById('form-asignacion').addEventListener('submit', function (event) {
             event.preventDefault();
             var formData = new FormData(this);
@@ -42,23 +65,25 @@
                 object[key] = value;
             });
             var json = JSON.stringify(object);
-            fetch('http://localhost:8080/AsignarAsignacion', {
+
+            fetch('http://localhost:8081/AsignarAsignacion', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': token
                 },
                 body: json
             })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Respuesta del servidor:', data);
-                alert('Asignación realizada correctamente.');
-                // Aquí podrías redirigir a otra página o realizar otras acciones según necesites
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Hubo un error al asignar la asignación.');
-            });
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Respuesta del servidor:', data);
+                    alert('Asignación realizada correctamente.');
+                    // Aquí podrías redirigir a otra página o realizar otras acciones según necesites
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Hubo un error al asignar la asignación.');
+                });
         });
     </script>
 </body>

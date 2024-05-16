@@ -14,17 +14,17 @@ import java.sql.SQLException;
 public class ProfesorDAO {
 
     // Establece la URL de conexión a la base de datos
-    private static final String URL = "jdbc:mysql://localhost:3306/nombre_base_datos";
+    private static final String URL = "jdbc:mysql://localhost:3306/sistemaescolar";
     // Establece el nombre de usuario y contraseña de la base de datos
-    private static final String USERNAME = "usuario";
-    private static final String PASSWORD = "contraseña";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "BaseDeDatos*";
 
     // Consulta SQL para insertar un nuevo profesor en la base de datos
-    private static final String INSERT_PROFESOR_SQL = "INSERT INTO profesores (id, nombre_completo) VALUES (?, ?)";
+    private static final String INSERT_PROFESOR_SQL = "INSERT INTO profesores (id, nombreCompleto) VALUES (?, ?)";
     // Consulta SQL para seleccionar un profesor por su ID
     private static final String SELECT_PROFESOR_BY_ID_SQL = "SELECT * FROM profesores WHERE id = ?";
     // Consulta SQL para actualizar el nombre completo de un profesor por su ID
-    private static final String UPDATE_PROFESOR_SQL = "UPDATE profesores SET nombre_completo = ? WHERE id = ?";
+    private static final String UPDATE_PROFESOR_SQL = "UPDATE profesores SET nombreCompleto = ? WHERE id = ?";
     // Consulta SQL para eliminar un profesor por su ID
     private static final String DELETE_PROFESOR_SQL = "DELETE FROM profesores WHERE id = ?";
 
@@ -49,7 +49,7 @@ public class ProfesorDAO {
             if (resultSet.next()) {
                 profesor = new Profesor();
                 profesor.setId(resultSet.getLong("id"));
-                profesor.setNombreCompleto(resultSet.getString("nombre_completo"));
+                profesor.setNombreCompleto(resultSet.getString("nombreCompleto"));
             }
         }
         return profesor;

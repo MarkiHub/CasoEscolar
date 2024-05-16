@@ -14,17 +14,17 @@ import java.sql.SQLException;
 public class AlumnoDAO {
 
     // Establece la URL de conexión a la base de datos
-    private static final String URL = "jdbc:mysql://localhost:3306/nombre_base_datos";
+    private static final String URL = "jdbc:mysql://localhost:3306/sistemaescolar";
     // Establece el nombre de usuario y contraseña de la base de datos
-    private static final String USERNAME = "usuario";
-    private static final String PASSWORD = "contraseña";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "BaseDeDatos*";
 
     // Consulta SQL para insertar un nuevo alumno en la base de datos
-    private static final String INSERT_ALUMNO_SQL = "INSERT INTO alumnos (id, nombre_completo) VALUES (?, ?)";
+    private static final String INSERT_ALUMNO_SQL = "INSERT INTO alumnos (id, nombreCompleto) VALUES (?, ?)";
     // Consulta SQL para seleccionar un alumno por su ID
     private static final String SELECT_ALUMNO_BY_ID_SQL = "SELECT * FROM alumnos WHERE id = ?";
     // Consulta SQL para actualizar el nombre completo de un alumno por su ID
-    private static final String UPDATE_ALUMNO_SQL = "UPDATE alumnos SET nombre_completo = ? WHERE id = ?";
+    private static final String UPDATE_ALUMNO_SQL = "UPDATE alumnos SET nombreCompleto = ? WHERE id = ?";
     // Consulta SQL para eliminar un alumno por su ID
     private static final String DELETE_ALUMNO_SQL = "DELETE FROM alumnos WHERE id = ?";
 

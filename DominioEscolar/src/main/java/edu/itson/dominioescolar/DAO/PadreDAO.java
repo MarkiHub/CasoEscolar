@@ -14,17 +14,17 @@ import java.sql.SQLException;
 public class PadreDAO {
 
     // Establece la URL de conexión a la base de datos
-    private static final String URL = "jdbc:mysql://localhost:3306/nombre_base_datos";
+    private static final String URL = "jdbc:mysql://localhost:3306/sistemaescolar";
     // Establece el nombre de usuario y contraseña de la base de datos
-    private static final String USERNAME = "usuario";
-    private static final String PASSWORD = "contraseña";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "BaseDeDatps*";
 
     // Consulta SQL para insertar un nuevo padre en la base de datos
-    private static final String INSERT_PADRE_SQL = "INSERT INTO padres (id, nombre_completo) VALUES (?, ?)";
+    private static final String INSERT_PADRE_SQL = "INSERT INTO padres (id, nombreCompleto) VALUES (?, ?)";
     // Consulta SQL para seleccionar un padre por su ID
     private static final String SELECT_PADRE_BY_ID_SQL = "SELECT * FROM padres WHERE id = ?";
     // Consulta SQL para actualizar el nombre completo de un padre por su ID
-    private static final String UPDATE_PADRE_SQL = "UPDATE padres SET nombre_completo = ? WHERE id = ?";
+    private static final String UPDATE_PADRE_SQL = "UPDATE padres SET nombreCompleto = ? WHERE id = ?";
     // Consulta SQL para eliminar un padre por su ID
     private static final String DELETE_PADRE_SQL = "DELETE FROM padres WHERE id = ?";
 

@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import jwt.JwtGenerator;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,19 +25,20 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class MainController {
-
+    private static String TOKEN;
+    
     @PostMapping("/nigga")
-    public void receiveUserInfo(@RequestBody Map<String, Object> userInfo) throws SQLException {
-        System.out.println("Datos recibidos de /user-info:");
-        System.out.println(userInfo);
-        long id = (Long) userInfo.get("name");
+    public Map<String, Object> receiveUserInfo(@RequestBody Map<String, Object> userInfo) throws SQLException {
+        System.out.println();
+        Long id = Long.valueOf(String.valueOf(userInfo.get("name")));
+        String jwt = "";
         if (id == 1) {
             Profesor profe = mandarProfe(id);
             Map<String, Object> claims = new HashMap<>();
             claims.put("userId", profe.getId());
             claims.put("username", profe.getNombreCompleto());
             claims.put("role", "Profesor");
-            String jwt = JwtGenerator.generateJwt(claims);
+            jwt = JwtGenerator.generateJwt(claims);
             System.out.println("JWT generado: " + jwt);
         } else if (id == 2) {
             Padre padre = mandarPadre(id);
@@ -44,7 +46,7 @@ public class MainController {
             claims.put("userId", padre.getId());
             claims.put("username", padre.getNombreCompleto());
             claims.put("role", "Padre");
-            String jwt = JwtGenerator.generateJwt(claims);
+            jwt = JwtGenerator.generateJwt(claims);
             System.out.println("JWT generado: " + jwt);
         } else if (id == 3) {
             Alumno alumno = mandarAlumno(id);
@@ -52,9 +54,22 @@ public class MainController {
             claims.put("userId", alumno.getId());
             claims.put("username", alumno.getNombreCompleto());
             claims.put("role", "Padre");
-            String jwt = JwtGenerator.generateJwt(claims);
+            jwt = JwtGenerator.generateJwt(claims);
             System.out.println("JWT generado: " + jwt);
+
         }
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("token", jwt);
+        TOKEN = jwt;
+        return resp;
+
+    }
+    
+    @GetMapping("/dogo")
+    public Map<String, Object> getToken(){
+        Map<String, Object> token = new HashMap<>();
+        token.put("token", TOKEN);
+        return token;
     }
 
     public Profesor mandarProfe(Long idProfe) throws SQLException {
