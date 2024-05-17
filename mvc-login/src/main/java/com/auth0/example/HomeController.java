@@ -27,7 +27,7 @@ public class HomeController {
     @GetMapping("/user-info")
     public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal OidcUser principal) {
         if (principal != null) {
-            String juanGamezEndpoint = "http://localhost:8081/nigga";
+            String juanGamezEndpoint = "http://host.docker.internal:8081/nigga";
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.postForObject(juanGamezEndpoint, principal.getAttributes(), Void.class);
 
