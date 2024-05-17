@@ -49,7 +49,7 @@ public class AlumnoDAO {
             if (resultSet.next()) {
                 alumno = new Alumno();
                 alumno.setId(resultSet.getLong("id"));
-                alumno.setNombreCompleto(resultSet.getString("nombre_completo"));
+                alumno.setNombreCompleto(resultSet.getString("nombreCompleto"));
             }
         }
         return alumno;

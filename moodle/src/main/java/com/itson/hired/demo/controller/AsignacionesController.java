@@ -31,11 +31,11 @@ import org.springframework.web.bind.annotation.RestController;
 //El pirata de culiacan
 @RestController
 public class AsignacionesController {
-
+    
     @Autowired
     private RabbitTemplate rabbitTemplate;
     private AsignacionDAO asigDao = new AsignacionDAO();
-
+    
     @GetMapping("/consultarAsig")
     public Asignacion consultarAsignacion(@RequestParam long idAsignacion) throws UnsupportedEncodingException {
         Gson gson = new Gson();
@@ -52,7 +52,7 @@ public class AsignacionesController {
         //System.out.println(respuesta);
         return qiubole;
     }
-
+    
     @PostMapping("/AsignarAsignacion")
     public Asignacion asignarAsignacion(@RequestBody Asignacion asig) {
         try {
@@ -62,9 +62,10 @@ public class AsignacionesController {
         }
         return asig;
     }
-
+    
     @PostMapping("/EntregarAsignacion")
-    public EntregaAsignacion EntregarAsignacion(@RequestBody EntregaAsignacion entreAsig) {
+    public EntregaAsignacion EntregarAsignacion(@RequestBody EntregaAsignacion entreAsig, ServletRequest req) {
+        entreAsig.setIdAlumno(Long.valueOf(String.valueOf(req.getAttribute("idAlumno"))));
         try {
             asigDao.enviarEntrega(entreAsig);
         } catch (SQLException ex) {
@@ -72,10 +73,12 @@ public class AsignacionesController {
         }
         return entreAsig;
     }
+    
     @GetMapping("/consultarAsignaciones")
     public List<Asignacion> consultarAsignaciones(@RequestParam String idCurso) {
         return asigDao.getAllAsig(Long.valueOf(idCurso));
     }
+    
     @GetMapping("/consultarAsignacionesPendientes")
     public List<Asignacion> consultarAsignacionesPendientes(@RequestParam Long idCurso, ServletRequest req) {
         return asigDao.getAsigPendientes(idCurso, Long.valueOf(String.valueOf(req.getAttribute("idAlumno"))));

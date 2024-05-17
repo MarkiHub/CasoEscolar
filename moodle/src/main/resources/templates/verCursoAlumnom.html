@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ver Curso</title>
+    <!-- Agregar enlace a Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="mt-5">Detalles del Curso</h1>
+        <div id="curso-details" class="mt-3">
+            <p><strong>ID del Curso:</strong> <span id="curso-id"></span></p>
+        </div>
+
+        <h2 class="mt-5">Asignaciones del Curso</h2>
+        <div class="mt-3">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID de Asignación</th>
+                        <th>Nombre de la Asignación</th>
+                        <th>Requiere Aprobación</th>
+                        <th>Entregar Tarea</th>
+                    </tr>
+                </thead>
+                <tbody id="asignaciones-list">
+                    <!-- Las asignaciones se cargarán aquí dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        function entregarTarea(idAsignacion) {
+            const entregaData = {
+                idAsignacion: idAsignacion,
+                calificacion: 0,
+                fechaEntrega: new Date().toISOString()
+            }
+            fetch('/EntregarAsignacion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': sessionStorage.getItem("token")
+                },
+                body: JSON.stringify(entregaData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Respuesta del servidor:', data);
+                    cargarAsignaciones();
+                    alert('Tarea entregada correctamente.');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Hubo un error al entregar la tarea.');
+                });
+        }
+
+        function cargarAsignaciones() {
+            const params = new URLSearchParams(window.location.search);
+            const cursoId = params.get('id');
+
+            document.getElementById('curso-id').textContent = cursoId;
+
+
+            fetch('/consultarAsignacionesPendientes?idCurso=' + cursoId, {
+                method: 'GET',
+                headers: {
+                    'Authorization': sessionStorage.getItem("token")
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const asignacionesList = document.getElementById('asignaciones-list');
+                    asignacionesList.innerHTML = '';
+
+                    data.forEach(asignacion => {
+                        const newRow = document.createElement('tr');
+                        newRow.innerHTML = `
+                            <td>${asignacion.id}</td>
+                            <td>${asignacion.nombre}</td>
+                            <td>${asignacion.reqAprobacion ? 'Sí' : 'No'}</td>
+                            <td>
+                                <button class="btn btn-primary" onclick="entregarTarea(${asignacion.id})">Entregar Tarea</button>
+                            </td>
+                        `;
+                        asignacionesList.appendChild(newRow);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Hubo un error al cargar las asignaciones del curso.');
+                });
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const url = '/dogo';
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    var token = data.token;
+                    sessionStorage.setItem("token", token);
+                });
+            cargarAsignaciones();
+        });
+    </script>
+</body>
+
+</html>

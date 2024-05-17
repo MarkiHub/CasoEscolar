@@ -30,7 +30,7 @@ public class DataFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse res = (HttpServletResponse) servletResponse;
 
-        Claims body = (Claims)req.getAttribute("MetaData");
+        Claims body = (Claims) req.getAttribute("MetaData");
 
         if (Validaciones.isProfesor(body)) {
             Long idProfesor = Long.valueOf(String.valueOf(body.get("userId")));

@@ -19,7 +19,7 @@ public class AlumnoController {
 
     @GetMapping("/verCurso")
     public String verCurso(@RequestParam Long id) {
-        return "verCursoAlumno";
+        return "verCursoAlumnom";
     }
 
 }
