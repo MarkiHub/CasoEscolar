@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ver Entregas</title>
+    <!-- Enlace al archivo CSS de Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <h1 class="mt-5">Ver Entregas</h1>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <table class="table mt-5">
+                <thead>
+                    <tr>
+                        <th>ID de Entrega</th>
+                        <th>Nombre de la Asignación</th>
+                        <th>Fecha de Entrega</th>
+                        <th>ID de Alumno</th>
+                        <th>Nombre de Alumno</th>
+                        <th>Calificación</th>
+                        <th>Calificar</th>
+                    </tr>
+                </thead>
+                <tbody id="entregas-list">
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <footer>
+        <div class="container">
+            <p class="mt-5">&copy; Sistema escuela</p>
+        </div>
+    </footer>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+
+        function cargarEntregas() {
+            fetch('/obtenerEntregas?idAsignacion=' + obtenerIdAsignacionDesdeURL(), {
+                headers: {
+                    'Authorization': sessionStorage.getItem("token")
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('entregas-list').innerHTML = '';
+                    data.forEach(entrega => {
+                        agregarEntregaATabla(entrega);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Hubo un error al cargar las entregas.');
+                });
+        }
+        function obtenerIdAsignacionDesdeURL() {
+                const params = new URLSearchParams(window.location.search);
+                return params.get('idAsignacion');
+            }
+
+            function agregarEntregaATabla(entrega) {
+                const entregasList = document.getElementById('entregas-list');
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${entrega.idEntrega}</td>
+                    <td>${entrega.nombreAsignacion}</td>
+                    <td>${entrega.fechaEntrega}</td>
+                    <td>${entrega.idAlumno}</td>
+                    <td>${entrega.nombreAlumno}</td>
+                    <td>${entrega.calificacion !== null ? entrega.calificacion : 'Pendiente'}</td>
+                    <td>
+                        <input type="number" class="form-control" id="calificacion-${entrega.idEntrega}" min="0" max="100">
+                        <button class="btn btn-primary mt-2" onclick="calificarEntrega(${entrega.idEntrega})">Calificar</button>
+                    </td>
+                `;
+                entregasList.appendChild(newRow);
+            }
+        document.addEventListener('DOMContentLoaded', function () {
+            cargarEntregas();
+        });
+
+        function calificarEntrega(idEntrega) {
+            const calificacion = document.getElementById(`calificacion-${idEntrega}`).value;
+            if (calificacion < 0 || calificacion > 100) {
+                alert('La calificación debe estar entre 0 y 100.');
+                return;
+            }
+
+            const entregaDTO = {
+                idEntrega: idEntrega,
+                calificacion: calificacion
+            };
+
+            fetch('/asignarCalificacion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': sessionStorage.getItem("token")
+                },
+                body: JSON.stringify(entregaDTO)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Respuesta del servidor:', data);
+                    alert('Entrega calificada correctamente.');
+                    cargarEntregas();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Hubo un error al calificar la entrega.');
+                });
+        }
+    </script>
+</body>
+
+</html>

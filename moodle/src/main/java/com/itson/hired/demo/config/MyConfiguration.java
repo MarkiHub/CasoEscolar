@@ -53,15 +53,27 @@ public class MyConfiguration {
     public FilterRegistrationBean CORSFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        
+
         config.addAllowedOrigin(CorsConfiguration.ALL);
         config.addAllowedHeader(CorsConfiguration.ALL);
         config.addAllowedMethod(CorsConfiguration.ALL);
         source.registerCorsConfiguration("/**", config);
-        
+
         FilterRegistrationBean registrationBean
                 = new FilterRegistrationBean(new CorsFilter(source));
         registrationBean.setOrder(0);
+
+        return registrationBean;
+    }
+
+    @Bean
+    public FilterRegistrationBean<DataFilter> dataFilter() {
+        FilterRegistrationBean<DataFilter> registrationBean
+                = new FilterRegistrationBean<>();
+
+        registrationBean.setFilter(new DataFilter());
+        registrationBean.addUrlPatterns("/*");
+        registrationBean.setOrder(2);
 
         return registrationBean;
     }

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignar Asignación</title>
+    <!-- Enlace al archivo CSS de Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <h1 class="mt-5">Asignar Asignación</h1>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <form id="form-asignacion" class="mt-5">
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" required>
+                </div>
+                <div class="form-group">
+                    <input type="number" class="form-control" id="idCurso" name="idCurso" hidden>
+                </div>
+                <div class="form-group">
+                    <label for="reqAprobacion">Requiere Aprobación:</label>
+                    <select class="form-control" id="reqAprobacion" name="reqAprobacion" required>
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Asignar Asignación</button>
+            </form>
+        </div>
+    </main>
+    <footer>
+        <div class="container">
+            <p class="mt-5">&copy; Sistema escuela</p>
+        </div>
+    </footer>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const params = new URLSearchParams(window.location.search);
+            const cursoId = params.get('id');
+            document.getElementById('idCurso').value = cursoId;
+        });
+
+        document.getElementById('form-asignacion').addEventListener('submit', function (event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+            var object = {};
+            formData.forEach(function (value, key) {
+                object[key] = value;
+            });
+            var json = JSON.stringify(object);
+
+            fetch('/AsignarAsignacion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': sessionStorage.getItem("token")
+                },
+                body: json
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la solicitud: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Respuesta del servidor:', data);
+                    alert('Asignación realizada correctamente.');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Hubo un error al asignar la asignación.');
+                });
+        });
+    </script>
+</body>
+
+</html>

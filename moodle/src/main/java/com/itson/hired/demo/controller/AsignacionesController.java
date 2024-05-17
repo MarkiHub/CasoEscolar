@@ -72,8 +72,8 @@ public class AsignacionesController {
         return entreAsig;
     }
     @GetMapping("/consultarAsignaciones")
-    public List<Asignacion> consultarAsignaciones(@RequestParam Long idCurso) {
-        return asigDao.getAllAsig(idCurso);
+    public List<Asignacion> consultarAsignaciones(@RequestParam String idCurso) {
+        return asigDao.getAllAsig(Long.valueOf(idCurso));
     }
     @GetMapping("/consultarAsignacionesPendientes")
     public List<Asignacion> consultarAsignacionesPendientes(@RequestParam Long idCurso, @RequestParam Long idAlumno) {

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ver Curso</title>
+    <!-- Agregar enlace a Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="mt-5">Detalles del Curso</h1>
+        <div id="curso-details" class="mt-3">
+            <p><strong>ID del Curso:</strong> <span id="curso-id"></span></p>
+        </div>
+        
+        <h2 class="mt-5">Opciones</h2>
+        <div class="mt-3">
+            <button class="btn btn-primary mr-3" id="asignar-tarea-btn">Asignar Asignacion</button>
+            <button class="btn btn-primary" id="ver-asignaciones-btn">Ver Asignaciones</button>
+        </div>
+    </div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const cursoId = params.get('id');
+
+            document.getElementById('curso-id').textContent = cursoId;
+
+            document.getElementById('asignar-tarea-btn').addEventListener('click', function() {
+                window.location.href = '/profesor/AsignarAsignacion?id=' + cursoId;
+            });
+
+
+            document.getElementById('ver-asignaciones-btn').addEventListener('click', function() {
+                window.location.href = '/profesor/verAsignaciones?idCurso=' + cursoId;
+            });
+        });
+    </script>
+</body>
+
+</html>
