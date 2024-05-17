@@ -25,7 +25,7 @@ public class EntregasDAO {
 
     private final String url = "jdbc:mysql://localhost:3306/sistemaescolar";
     private final String usuario = "root";
-    private final String contraseña = "BaseDeDatos*";
+    private final String contraseña = "laresrangel";
 
     public List<EntregasPadresDTO> getAsignacionesAprobar(Long idPadre) {
         List<EntregasPadresDTO> asigAprobar = new ArrayList<>();

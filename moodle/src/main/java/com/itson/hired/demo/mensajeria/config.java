@@ -13,6 +13,7 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.SimpleMessageConverter;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
  * @author xeron
  */
 @Configuration
+@ComponentScan("com.itson.hired.*")
 public class config {
 
     public static final String EXCHANGE_NAME = "escolar";

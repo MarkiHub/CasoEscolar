@@ -4,6 +4,7 @@
  */
 package com.itson.hired.DAO;
 
+import com.itson.hired.interfaces.IMensajeDAO;
 import edu.itson.dominioescolar.Conversacion;
 import edu.itson.dominioescolar.Mensaje;
 import java.sql.Connection;
@@ -14,17 +15,25 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.stereotype.Repository;
 
 /**
  *
  * @author ildex
  */
-public class MensajeDAO {
+@Repository
+@AutoConfiguration
+public class MensajeDAO implements IMensajeDAO {
 
     private final String url = "jdbc:mysql://localhost:3306/sistemaescolar";
     private final String usuario = "root";
     private final String contraseña = "laresrangel";
 
+    public MensajeDAO() {
+    }
+
+    @Override
     public void insert(Mensaje mensaje) {
         try (Connection con = DriverManager.getConnection(url, usuario, contraseña)) {
             String query = "INSERT INTO Mensajes (id_conversacion, id_sender, texto) VALUES (?, ?, ?)";
@@ -44,6 +53,7 @@ public class MensajeDAO {
         }
     }
 
+    @Override
     public List<Mensaje> getMensajesPorConversacion(Long idConversacion) {
         List<Mensaje> mensajes = new ArrayList<>();
         try (Connection con = DriverManager.getConnection(url, usuario, contraseña)) {
@@ -67,6 +77,7 @@ public class MensajeDAO {
         return mensajes;
     }
 
+    @Override
     public Mensaje getMensajePorId(Long idMensaje) {
         Mensaje mensaje = null;
         try (Connection con = DriverManager.getConnection(url, usuario, contraseña)) {
@@ -89,6 +100,7 @@ public class MensajeDAO {
         return mensaje;
     }
 
+    @Override
     public void crearConversacion(Conversacion conversacion) {
         try (Connection con = DriverManager.getConnection(url, usuario, contraseña)) {
             String query = "INSERT INTO Conversaciones (id_profesor, id_padre) VALUES (?, ?)";
@@ -107,6 +119,7 @@ public class MensajeDAO {
         }
     }
 
+    @Override
     public void deleteMensaje(Long idMensaje) {
         try (Connection con = DriverManager.getConnection(url, usuario, contraseña)) {
             String query = "DELETE FROM Mensajes WHERE id = ?";
