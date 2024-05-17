@@ -57,7 +57,7 @@ public class MainController {
             Map<String, Object> claims = new HashMap<>();
             claims.put("userId", alumno.getId());
             claims.put("username", alumno.getNombreCompleto());
-            claims.put("role", "Padre");
+            claims.put("role", "Alumno");
             jwt = JwtGenerator.generateJwt(claims);
             System.out.println("JWT generado: " + jwt);
 

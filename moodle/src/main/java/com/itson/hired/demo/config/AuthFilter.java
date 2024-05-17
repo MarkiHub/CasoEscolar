@@ -4,6 +4,8 @@
  */
 package com.itson.hired.demo.config;
 
+import com.itson.hired.demo.config.util.OpenPaths;
+import com.itson.hired.demo.config.util.Validaciones;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -23,6 +25,8 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -38,27 +42,42 @@ public class AuthFilter implements Filter {
             throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse res = (HttpServletResponse) servletResponse;
+        String token = req.getHeader("Authorization");
+        String method = req.getMethod();
+        String path = req.getServletPath();
+        Jws<Claims> claim = null;
 
-        if (req.getMethod().equalsIgnoreCase("get")) {
+        boolean isOpenPath = Validaciones.validateOpenPaths(path);
+
+        if (isOpenPath) {
             filterChain.doFilter(req, res);
             return;
         }
 
-        if (req.getHeader("Authorization") == null && !req.getServletPath().equalsIgnoreCase("/nigga") && !req.getServletPath().equalsIgnoreCase("/dogo")) {
-            res.setStatus(401);
+        if (method.equalsIgnoreCase("get") && token == null) {
+            filterChain.doFilter(req, res);
             return;
         }
-        if (req.getMethod().equalsIgnoreCase("post") && !req.getServletPath().equalsIgnoreCase("/nigga") && !req.getServletPath().equalsIgnoreCase("/dogo")) {
-            String token = req.getHeader("Authorization");
-            System.out.println(token);
 
-            Jws<Claims> claim = jwt.JwtGenerator.decodeJWT2(token);
+        if (token == null) {
+            res.setStatus(401);
+            return;
+        } else {
+            claim = jwt.JwtGenerator.decodeJWT2(token);
+            req.setAttribute("MetaData", claim.getBody());
+        }
+
+        if (method.equalsIgnoreCase("post")) {
+            claim = jwt.JwtGenerator.decodeJWT2(token);
             if (claim == null) {
+                System.out.println("Token invalido");
                 res.setStatus(401);
                 return;
+            } else {
+                req.setAttribute("MetaData", claim.getBody());
             }
         }
-        
+
         filterChain.doFilter(req, res);
     }
 }

@@ -4,6 +4,7 @@
  */
 package com.itson.hired.demo.config;
 
+import com.itson.hired.demo.config.util.RolePages;
 import com.itson.hired.demo.config.util.Validaciones;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -20,7 +21,7 @@ import java.io.IOException;
  *
  * @author Elkur
  */
-public class DataFilter implements Filter {
+public class PageAccessFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest,
@@ -30,17 +31,19 @@ public class DataFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse res = (HttpServletResponse) servletResponse;
 
-        Claims body = (Claims)req.getAttribute("MetaData");
+        String rol = String.valueOf(req.getAttribute("rol"));
+        String path = req.getServletPath();
 
-        if (Validaciones.isProfesor(body)) {
-            Long idProfesor = Long.valueOf(String.valueOf(body.get("userId")));
-            req.setAttribute("idProfesor", idProfesor);
-        } else if (Validaciones.isAlumno(body)) {
-            Long idAlumno = Long.valueOf(String.valueOf(body.get("userId")));
-            req.setAttribute("idAlumno", idAlumno);
-        } else if (Validaciones.isPadre(body)) {
-            Long idPadre = Long.valueOf(String.valueOf(body.get("userId")));
-            req.setAttribute("idPadre", idPadre);
+        RolePages rp = Validaciones.getRolPages(rol);
+
+        if (rp != null) {
+            if (Validaciones.validateAccessPage(rp, path)) {
+                filterChain.doFilter(req, res);
+                return;
+            }else{
+                res.setStatus(403);
+                return;
+            }
         }
 
         filterChain.doFilter(req, res);

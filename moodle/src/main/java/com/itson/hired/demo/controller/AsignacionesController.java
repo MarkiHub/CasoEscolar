@@ -10,6 +10,7 @@ import com.itson.hired.demo.mensajeria.config;
 import edu.itson.dominioescolar.Alumno;
 import edu.itson.dominioescolar.Asignacion;
 import edu.itson.dominioescolar.EntregaAsignacion;
+import jakarta.servlet.ServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.List;
@@ -76,7 +77,7 @@ public class AsignacionesController {
         return asigDao.getAllAsig(Long.valueOf(idCurso));
     }
     @GetMapping("/consultarAsignacionesPendientes")
-    public List<Asignacion> consultarAsignacionesPendientes(@RequestParam Long idCurso, @RequestParam Long idAlumno) {
-        return asigDao.getAsigPendientes(idCurso, idAlumno);
+    public List<Asignacion> consultarAsignacionesPendientes(@RequestParam Long idCurso, ServletRequest req) {
+        return asigDao.getAsigPendientes(idCurso, Long.valueOf(String.valueOf(req.getAttribute("idAlumno"))));
     }
 }

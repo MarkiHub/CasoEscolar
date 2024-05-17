@@ -73,6 +73,18 @@ public class MyConfiguration {
 
         registrationBean.setFilter(new DataFilter());
         registrationBean.addUrlPatterns("/*");
+        registrationBean.setOrder(3);
+
+        return registrationBean;
+    }
+
+    @Bean
+    public FilterRegistrationBean<RoleFilter> roleFilter() {
+        FilterRegistrationBean<RoleFilter> registrationBean
+                = new FilterRegistrationBean<>();
+
+        registrationBean.setFilter(new RoleFilter());
+        registrationBean.addUrlPatterns("/*");
         registrationBean.setOrder(2);
 
         return registrationBean;
