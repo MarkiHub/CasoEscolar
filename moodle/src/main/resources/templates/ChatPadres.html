@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Lista de Padres</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f7f7f7;
+            }
+
+            header {
+                background-color: #ffc107;
+                color: #fff;
+                padding: 20px 0;
+                padding-left: 5%;
+                text-align: left;
+            }
+
+            .container {
+                background-color: #fff;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+                margin: 20px auto;
+                max-width: 800px;
+            }
+
+            .padre {
+                border-bottom: 1px solid #ccc;
+                padding-bottom: 10px;
+                margin-bottom: 20px;
+            }
+
+            .padre h3 {
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+
+            .padre p {
+                margin: 5px 0;
+            }
+
+            .btn-mensaje {
+                background-color: #ffc107;
+                color: #fff;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .btn-mensaje:hover {
+                background-color: #555;
+            }
+
+            footer {
+                background-color: #333;
+                color: #fff;
+                text-align: center;
+                padding: 10px;
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Lista de Padres</h1>
+            <h3 id="profesorNombre"></h3>
+        </header>
+        <div class="container" id="padresContainer"></div>
+        <footer>
+            <p>&copy; 2024 | Todos los derechos reservados</p>
+        </footer>
+        <script>
+            document.addEventListener('DOMContentLoaded', async () => {
+                const url = '/dogo';
+                const padresContainer = document.getElementById('padresContainer');
+                const profesorNombreElement = document.getElementById('profesorNombre');
+
+                try {
+                    // Primer fetch para obtener el token
+                    const tokenResponse = await fetch(url);
+                    if (!tokenResponse.ok) {
+                        throw new Error('Error en la solicitud: ' + tokenResponse.status);
+                    }
+                    const tokenData = await tokenResponse.json();
+                    const token = tokenData.token;
+                    sessionStorage.setItem("token", token);
+
+                    // Fetch para obtener el objeto Profesor
+                    const profesorResponse = await fetch('/api/profesores/1', {//Cambia 1 por el ID real del profesor
+                        method: "GET",
+                        headers: {
+                            "Authorization": token
+                        }
+                    });
+
+                    if (!profesorResponse.ok) {
+                        throw new Error('Error al obtener el objeto del profesor');
+                    }
+
+                    const profesor = await profesorResponse.json();
+                    const profesorId = profesor.id;
+                    const profesorNombre = profesor.nombreCompleto;
+
+                    // Mostrar el nombre del profesor en el encabezado
+                    profesorNombreElement.textContent = `Profesor: ${profesorNombre}`;
+
+                    // Segundo fetch para obtener la lista de padres usando el token
+                    const padresResponse = await fetch('/api/padres', {
+                        method: "GET",
+                        headers: {
+                            "Authorization": token
+                        }
+                    });
+
+                    if (padresResponse.ok) {
+                        const padres = await padresResponse.json();
+                        padres.forEach(padre => {
+                            const padreDiv = document.createElement('div');
+                            padreDiv.classList.add('padre');
+                            padreDiv.innerHTML = `
+                                <h3>${padre.nombreCompleto}</h3>
+                                <button class="btn-mensaje" onclick="verificarOCrearConversacion(${padre.id}, ${profesorId}, '${token}')">Enviar Mensaje</button>
+                            `;
+                            padresContainer.appendChild(padreDiv);
+                        });
+                    } else {
+                        console.error('Error al cargar los padres');
+                    }
+                } catch (error) {
+                    console.error('Ocurrió un error:', error);
+                }
+            });
+
+            function verificarOCrearConversacion(padreId, profesorId, token) {
+                fetch('/api/conversaciones/crear', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify({idPadre: padreId, idProfesor: profesorId}),
+                })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Error en la solicitud: ' + response.status);
+                            }
+                            return response.json();
+                        })
+                        .then(conversacionId => {
+                            window.location.href = `/profesor/chatPadre?conversacionId=${conversacionId}`;
+                        })
+                        .catch(error => {
+                            console.error('Error al verificar o crear la conversación', error);
+                        });
+            }
+        </script>
+    </body>
+</html>

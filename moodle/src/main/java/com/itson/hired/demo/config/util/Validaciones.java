@@ -51,7 +51,8 @@ public class Validaciones {
         List<OpenPaths> pathsAbiertos = Arrays.asList(
                 OpenPaths.TokenAccess,
                 OpenPaths.TokenCreation,
-                OpenPaths.TemporalIndex1
+                OpenPaths.TemporalIndex1,
+                OpenPaths.TemporalIndex2
         );
 
         for (OpenPaths op : pathsAbiertos) {

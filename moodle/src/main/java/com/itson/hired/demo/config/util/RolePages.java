@@ -22,7 +22,9 @@ public enum RolePages {
             "/profesor/AsignarAsignacion",
             "/profesor/verEntregas",
             "/profesor/verAsignaciones",
-            "/profesor/verCurso"
+            "/profesor/verCurso",
+            "/profesor/Chat",
+            "/profesor/chatPadre"
     ));
 
     private List<String> pathsAccess;

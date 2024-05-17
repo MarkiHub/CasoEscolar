@@ -4,10 +4,28 @@
  */
 package com.itson.hired.interfaces;
 
+import edu.itson.dominioescolar.Conversacion;
+import edu.itson.dominioescolar.Mensaje;
+import java.util.List;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.stereotype.Repository;
+
 /**
  *
  * @author ildex
  */
-public interface IMensajeDAO  {
-    
+@Repository
+@AutoConfiguration
+public interface IMensajeDAO {
+
+    public void insert(Mensaje mensaje);
+
+    public List<Mensaje> getMensajesPorConversacion(Long idConversacion);
+
+    public Mensaje getMensajePorId(Long idMensaje);
+
+    public void crearConversacion(Conversacion conversacion);
+
+    public void deleteMensaje(Long idMensaje);
 }
+
