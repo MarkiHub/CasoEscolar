@@ -18,35 +18,23 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const url = '/dogo';
 
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error en la solicitud: ' + response.status);
-                    }
-                    return response.json();
-                })
+            fetch("/ConsultarCursos", {
+                method: "GET",
+                headers: {
+                    "Authorization": sessionStorage.getItem("token")
+                }
+            })
+                .then(response => response.json())
                 .then(data => {
-                    var token = data.token;
-                    sessionStorage.setItem("token", token);
+                    var resultadosDiv = document.getElementById("resultados");
+                    resultadosDiv.innerHTML = "";
 
-                    fetch("/ConsultarCursos", {
-                        method: "GET",
-                        headers: {
-                            "Authorization": token
-                        }
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            var resultadosDiv = document.getElementById("resultados");
-                            resultadosDiv.innerHTML = "";
+                    data.forEach(curso => {
+                        var cursoDiv = document.createElement("div");
+                        cursoDiv.classList.add("card", "mt-3");
 
-                            data.forEach(curso => {
-                                var cursoDiv = document.createElement("div");
-                                cursoDiv.classList.add("card", "mt-3");
-
-                                cursoDiv.innerHTML = `
+                        cursoDiv.innerHTML = `
                                     <div class="card-body">
                                         <h5 class="card-title">ID Curso: ${curso.idCurso}</h5>
                                         <p class="card-text">Nombre Materia: ${curso.nombreMateria}</p>
@@ -54,20 +42,17 @@
                                     </div>
                                 `;
 
-                                cursoDiv.querySelector("button").addEventListener("click", function () {
-                                    window.location.href = "/profesor/verCurso?id=" + curso.idCurso;
-                                });
-
-                                resultadosDiv.appendChild(cursoDiv);
-                            });
-                        })
-                        .catch(error => {
-                            console.error('Error al realizar la consulta:', error);
+                        cursoDiv.querySelector("button").addEventListener("click", function () {
+                            window.location.href = "/profesor/verCurso?id=" + curso.idCurso;
                         });
+
+                        resultadosDiv.appendChild(cursoDiv);
+                    });
                 })
                 .catch(error => {
-                    console.error('Ocurrió un error:', error);
+                    console.error('Error al realizar la consulta:', error);
                 });
+
         });
 
     </script>

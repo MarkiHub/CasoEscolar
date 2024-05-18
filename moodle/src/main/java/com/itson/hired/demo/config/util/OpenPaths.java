@@ -9,7 +9,7 @@ package com.itson.hired.demo.config.util;
  * @author Elkur
  */
 public enum OpenPaths {
-    TokenCreation("/nigga"), TokenAccess("/dogo"), TemporalIndex1("/profesor/Cursos"), TemporalIndex2("/profesor/Chat");
+    TokenCreation("/nigga"), TokenAccess("/dogo"), TemporalIndex1("/profesor/Cursos"), TemporalIndex2("/profesor/Chat"), index("/");
     private final String path;
 
     private OpenPaths(String path) {

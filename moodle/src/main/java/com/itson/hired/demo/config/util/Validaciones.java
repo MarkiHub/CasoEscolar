@@ -52,7 +52,8 @@ public class Validaciones {
                 OpenPaths.TokenAccess,
                 OpenPaths.TokenCreation,
                 OpenPaths.TemporalIndex1,
-                OpenPaths.TemporalIndex2
+                OpenPaths.TemporalIndex2,
+                OpenPaths.index
         );
 
         for (OpenPaths op : pathsAbiertos) {

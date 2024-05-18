@@ -110,19 +110,7 @@
                 });
         }
         document.addEventListener('DOMContentLoaded', () => {
-            const url = '/dogo';
 
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error en la solicitud: ' + response.status);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    var token = data.token;
-                    sessionStorage.setItem("token", token);
-                });
             cargarAsignaciones();
         });
     </script>

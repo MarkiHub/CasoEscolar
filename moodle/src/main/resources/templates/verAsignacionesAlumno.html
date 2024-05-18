@@ -35,16 +35,21 @@
     </div>
 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const params = new URLSearchParams(window.location.search);
-            const cursoId = params.get('id');
-
-            document.getElementById('curso-id').textContent = cursoId;
-            const url = '/dogo';
-
-            fetch(url)
+        function entregarTarea(idAsignacion) {
+            const entregaData = {
+                idAsignacion: idAsignacion,
+                calificacion: 0,
+                fechaEntrega: new Date().toISOString()
+            };
+            fetch('/EntregarAsignacion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': sessionStorage.getItem("token")
+                },
+                body: JSON.stringify(entregaData)
+            })
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Error en la solicitud: ' + response.status);
@@ -52,9 +57,19 @@
                     return response.json();
                 })
                 .then(data => {
-                    var token = data.token;
-                    sessionStorage.setItem("token", token);
+                    console.log('Respuesta del servidor:', data);
+                    alert('Tarea entregada correctamente.');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Hubo un error al entregar la tarea.');
                 });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const cursoId = params.get('id');
+            document.getElementById('curso-id').textContent = cursoId;
 
             fetch('/consultarAsignacionesPendientes?idCurso=' + cursoId)
                 .then(response => {
@@ -73,47 +88,20 @@
                             <td>${asignacion.nombre}</td>
                             <td>${asignacion.reqAprobacion ? 'Sí' : 'No'}</td>
                             <td>
-                                <button class="btn btn-primary" onclick="entregarTarea(${asignacion.id})">Entregar Tarea</button>
+                                <button class="btn btn-primary">Entregar Tarea</button>
                             </td>
                         `;
                         asignacionesList.appendChild(newRow);
+
+                        // Add event listener to the button
+                        newRow.querySelector('button').addEventListener('click', () => entregarTarea(asignacion.id));
                     });
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     alert('Hubo un error al cargar las asignaciones del curso.');
                 });
-
-            function entregarTarea(idAsignacion) {
-                const entregaData = {
-                    idAsignacion: idAsignacion,
-                    idAlumno: 1,
-                    calificacion: 0,
-                    fechaEntrega: new Date().toISOString()
-                }
-                fetch('/EntregarAsignacion', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': sessionStorage.getItem("token")
-                    },
-                    body: JSON.stringify(entregaData)
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Error en la solicitud: ' + response.status);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('Respuesta del servidor:', data);
-                        alert('Tarea entregada correctamente.');
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Hubo un error al entregar la tarea.');
-                    });
-            }
+                
         });
     </script>
 </body>
