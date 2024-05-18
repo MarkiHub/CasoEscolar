@@ -5,7 +5,6 @@
 package com.itson.hired.interfaces;
 
 import edu.itson.dominioescolar.Conversacion;
-import edu.itson.dominioescolar.DTO.MensajeDTO;
 import edu.itson.dominioescolar.Mensaje;
 import java.util.List;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -28,7 +27,5 @@ public interface IMensajeDAO {
     public void crearConversacion(Conversacion conversacion);
 
     public void deleteMensaje(Long idMensaje);
-    
-    public void insertDTO(MensajeDTO mensaje);
 }
 

@@ -28,8 +28,10 @@ public class HomeController {
     public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal OidcUser principal) {
         if (principal != null) {
             String juanGamezEndpoint = "http://host.docker.internal:8081/nigga";
+//            String juanCarballoEndpoint = "http://host.docker.internal:8082/nigga";
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.postForObject(juanGamezEndpoint, principal.getAttributes(), Void.class);
+//            restTemplate.postForObject(juanCarballoEndpoint, principal.getAttributes(), Void.class);
 
             return ResponseEntity.ok(principal.getAttributes());
         } else {

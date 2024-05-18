@@ -2,11 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.itson.hired.DAO;
+package com.itson.hired.demo.DAO;
 
 import com.itson.hired.interfaces.IMensajeDAO;
 import edu.itson.dominioescolar.Conversacion;
-import edu.itson.dominioescolar.DTO.MensajeDTO;
 import edu.itson.dominioescolar.Mensaje;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -42,25 +41,6 @@ public class MensajeDAO implements IMensajeDAO {
                 statement.setLong(1, mensaje.getConversacion().getId());
                 statement.setLong(2, mensaje.getIdSender());
                 statement.setString(3, mensaje.getText());
-                statement.executeUpdate();
-
-                ResultSet generatedKeys = statement.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    mensaje.setId(generatedKeys.getLong(1));
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    public void insertDTO(MensajeDTO mensaje) {
-        try (Connection con = DriverManager.getConnection(url, usuario, contraseña)) {
-            String query = "INSERT INTO Mensajes (id_conversacion, id_sender, texto) VALUES (?, ?, ?)";
-            try (PreparedStatement statement = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-                statement.setLong(1, mensaje.getConversacionId());
-                statement.setLong(2, mensaje.getIdSender());
-                statement.setString(3, mensaje.getTexto());
                 statement.executeUpdate();
 
                 ResultSet generatedKeys = statement.getGeneratedKeys();

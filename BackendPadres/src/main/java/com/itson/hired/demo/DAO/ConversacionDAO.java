@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.itson.hired.DAO;
+package com.itson.hired.demo.DAO;
 
 import com.itson.hired.interfaces.IConversacionDAO;
 import edu.itson.dominioescolar.Conversacion;
@@ -74,23 +74,5 @@ public class ConversacionDAO implements IConversacionDAO {
             e.printStackTrace();
         }
         return Optional.ofNullable(conversacion);
-    }
-
-    @Override
-    public Long getConversacionIdByPadreAndProfesor(Long idPadre, Long idProfesor) {
-        Long idConversacion = null;
-        String query = "SELECT id FROM Conversaciones WHERE idPadre = ? AND idProfesor = ?";
-        try (Connection con = DriverManager.getConnection(url, usuario, contraseña); PreparedStatement stmt = con.prepareStatement(query)) {
-            stmt.setLong(1, idPadre);
-            stmt.setLong(2, idProfesor);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    idConversacion = rs.getLong("id");
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return idConversacion;
     }
 }

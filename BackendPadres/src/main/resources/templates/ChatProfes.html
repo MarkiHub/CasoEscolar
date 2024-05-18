@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Lista de Profesores</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f7f7f7;
+            }
+            header {
+                background-color: #ffc107;
+                color: #fff;
+                padding: 20px 0;
+                padding-left: 5%;
+                text-align: left;
+            }
+            .container {
+                background-color: #fff;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+                margin: 20px auto;
+                max-width: 800px;
+            }
+            .profesor {
+                border-bottom: 1px solid #ccc;
+                padding-bottom: 10px;
+                margin-bottom: 20px;
+            }
+            .profesor h3 {
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+            .profesor p {
+                margin: 5px 0;
+            }
+            .btn-mensaje {
+                background-color: #ffc107;
+                color: #fff;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+            .btn-mensaje:hover {
+                background-color: #555;
+            }
+            footer {
+                background-color: #333;
+                color: #fff;
+                text-align: center;
+                padding: 10px;
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Profesores de los Hijos</h1>
+            <h3 id="padreNombre"></h3>
+        </header>
+        <div class="container" id="profesoresContainer"></div>
+        <footer>
+            <p>&copy; 2024 | Todos los derechos reservados</p>
+        </footer>
+        <script>
+            document.addEventListener('DOMContentLoaded', async () => {
+                const profesoresContainer = document.getElementById('profesoresContainer');
+                const padreNombreElement = document.getElementById('padreNombre');
+                const idPadre = 2;
+
+                try {
+                    const padreResponse = await fetch(`/api/padres/${idPadre}`);
+                    if (!padreResponse.ok) {
+                        throw new Error('Error al obtener el nombre del padre');
+                    }
+                    const padre = await padreResponse.json();
+                    const padreNombre = padre.nombreCompleto;
+
+                    padreNombreElement.textContent = `Padre: ${padreNombre}`;
+
+                    const profesoresResponse = await fetch(`/api/padres/profesores/${idPadre}`);
+                    if (!profesoresResponse.ok) {
+                        throw new Error('Error al obtener la lista de profesores');
+                    }
+                    const profesores = await profesoresResponse.json();
+                    profesores.forEach(profesor => {
+                        const profesorDiv = document.createElement('div');
+                        profesorDiv.classList.add('profesor');
+                        profesorDiv.innerHTML = `
+                            <h3>${profesor.nombreCompleto}</h3>
+                            <button class="btn-mensaje" onclick="verificarOCrearConversacion(${padre.id}, ${profesor.id})">Enviar Mensaje</button>
+                        `;
+                        profesoresContainer.appendChild(profesorDiv);
+                    });
+                } catch (error) {
+                    console.error('Ocurrió un error:', error);
+                }
+            });
+
+            function verificarOCrearConversacion(padreId, profesorId) {
+                fetch('/api/conversaciones/crear', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({idPadre: padreId, idProfesor: profesorId}),
+                })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Error en la solicitud: ' + response.status);
+                            }
+                            return response.json();
+                        })
+                        .then(conversacionId => {
+                            window.location.href = `/padre/chatProfe?conversacionId=${conversacionId}`;
+                        })
+                        .catch(error => {
+                            console.error('Error al verificar o crear la conversación', error);
+                        });
+            }
+        </script>
+    </body>
+</html>

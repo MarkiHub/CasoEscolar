@@ -2,9 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.itson.hired.DAO;
+package com.itson.hired.demo.DAO;
 
 import edu.itson.dominioescolar.Padre;
+import edu.itson.dominioescolar.Profesor;
 import jakarta.servlet.ServletRequest;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -32,6 +33,30 @@ public class PadreDAO {
     public PadreDAO() {
     }
 
+    public List<Profesor> obtenerProfesoresPorPadre(Long idPadre) {
+        List<Profesor> profesores = new ArrayList<>();
+        String query = "SELECT DISTINCT p.* "
+                + "FROM Profesores p "
+                + "JOIN Cursos c ON p.id = c.idProfesor "
+                + "JOIN AlumnosInscritos ai ON c.id = ai.idCurso "
+                + "JOIN Alumnos a ON ai.idAlumno = a.id "
+                + "WHERE a.idPadre = ?";
+        try (Connection con = DriverManager.getConnection(url, usuario, contraseña); PreparedStatement stmt = con.prepareStatement(query)) {
+            stmt.setLong(1, idPadre);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Profesor profesor = new Profesor();
+                    profesor.setId(rs.getLong("id"));
+                    profesor.setNombreCompleto(rs.getString("nombreCompleto"));
+                    profesores.add(profesor);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return profesores;
+    }
+
     public List<Padre> obtenerPadresPorProfesor(Long idProfesor) {
         List<Padre> padres = new ArrayList<>();
         String query = "SELECT DISTINCT p.* "
@@ -56,36 +81,21 @@ public class PadreDAO {
         return padres;
     }
 
-    public Long getIdPadreByIdAlumno(Long idAlumno) {
-        Long idPadre = null;
-        String query = "SELECT idPadre FROM Alumnos WHERE id = ?";
+    public Padre obtenerPadrePorId(Long idPadre) {
+        Padre padre = null;
+        String query = "SELECT * FROM Padres WHERE id = ?";
         try (Connection con = DriverManager.getConnection(url, usuario, contraseña); PreparedStatement stmt = con.prepareStatement(query)) {
-            stmt.setLong(1, idAlumno);
+            stmt.setLong(1, idPadre);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    idPadre = rs.getLong("idPadre");
+                    padre = new Padre();
+                    padre.setId(rs.getLong("id"));
+                    padre.setNombreCompleto(rs.getString("nombreCompleto"));
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return idPadre;
-    }
-    
-    public String getNombreAlumnoById(long idAlumno) {
-        String nombreAlumno = null;
-        String query = "SELECT nombre FROM Alumnos WHERE id = ?";
-        try (Connection con = DriverManager.getConnection(url, usuario, contraseña);
-             PreparedStatement stmt = con.prepareStatement(query)) {
-            stmt.setLong(1, idAlumno);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    nombreAlumno = rs.getString("nombre");
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return nombreAlumno;
+        return padre;
     }
 }

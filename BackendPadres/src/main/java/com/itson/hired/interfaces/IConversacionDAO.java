@@ -16,6 +16,4 @@ public interface IConversacionDAO {
     Conversacion crearConversacion(Conversacion conversacion);
 
     Optional<Conversacion> obtenerConversacionPorProfesorYPadre(Long idProfesor, Long idPadre);
-
-    Long getConversacionIdByPadreAndProfesor(Long idPadre, Long idProfesor);
 }
