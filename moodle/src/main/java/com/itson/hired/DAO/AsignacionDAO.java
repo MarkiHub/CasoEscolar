@@ -130,6 +130,7 @@ public class AsignacionDAO {
                     while (resultSet.next()) {
                         asignacion = new Asignacion();
                         asignacion.setId(resultSet.getLong("id"));
+                        asignacion.setReqAprobacion(resultSet.getBoolean("reqAprobacion"));
                         asignacion.setNombre(resultSet.getString("nombre"));
                         asignacion.setIdCurso(resultSet.getLong("idCurso"));
                         asignacionesP.add(asignacion);
